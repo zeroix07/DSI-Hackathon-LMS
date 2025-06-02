@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile - AI Education System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #fff;
+      color: #222;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #ccc;
+    }
+    .logo-section {
+      display: flex;
+      align-items: center;
+    }
+    .logo-section img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: black;
+    }
+    .profile-container {
+      padding: 40px 0;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .profile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+    .profile-info {
+      display: flex;
+      align-items: center;
+    }
+    .profile-info img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-right: 20px;
+    }
+    .profile-details h2 {
+      font-size: 1.8rem;
+    }
+    .profile-tags span {
+      background: #eee;
+      padding: 4px 8px;
+      margin-right: 6px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
+    .profile-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 160px;
+    }
+    .profile-actions button {
+      padding: 10px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .edit-btn {
+      background-color: #ffc107;
+    }
+    .view-btn {
+      background-color: black;
+      color: white;
+    }
+    .progress-section {
+      text-align: center;
+      padding-top: 40px;
+      border-top: 1px solid #ccc;
+    }
+    .progress-section h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .progress-section p {
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+    .progress-section button {
+      padding: 10px 20px;
+      background-color: #ffc107;
+      border: none;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .stats-popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .stats-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 800px;
+      width: 90%;
+      text-align: center;
+    }
+    .stats-content h2 {
+      margin-bottom: 10px;
+    }
+    .stats-content p {
+      margin-bottom: 30px;
+      color: #555;
+    }
+    .bar-chart {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      height: 200px;
+      margin-bottom: 20px;
+    }
+    .bar {
+      width: 40px;
+      background-color: #6b8ed6;
+      border-radius: 4px 4px 0 0;
+    }
+    .bar-label {
+      text-align: center;
+      margin-top: 5px;
+      font-size: 0.9rem;
+    }
+    .close-btn {
+      margin-top: 30px;
+      padding: 10px 20px;
+      background: black;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+  <script>
+    function showStats() {
+      document.getElementById('statsPopup').style.display = 'flex';
+    }
+    function closeStats() {
+      document.getElementById('statsPopup').style.display = 'none';
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <div class="logo-section">
+      <img src="logo.png" alt="Logo">
+      <strong>AI Education System</strong>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#">Course</a>
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="profile-info">
+        <img src="user-profile.jpg" alt="User Photo">
+        <div class="profile-details">
+          <h2>Agus</h2>
+          <div class="profile-tags">
+            <span>Data Scientist</span>
+            <span>Machine Learning Enthusiast</span>
+          </div>
+          <p>Passionate about turning data into insights.</p>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <button class="edit-btn">Edit Profile</button>
+        <button class="view-btn" onclick="location.href='profile.html'">View Profile</button>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <h2>Your Learning Progress</h2>
+      <p>Track your journey in data science.</p>
+      <button onclick="showStats()">View Detailed Stats</button>
+    </div>
+  </div>
+
+  <div class="stats-popup" id="statsPopup">
+    <div class="stats-content">
+      <h2>Your Current Skill Metrics</h2>
+      <p>Here’s how you currently measure against common skills.</p>
+      <div class="bar-chart">
+        <div>
+          <div class="bar" style="height: 150px;"></div>
+          <div class="bar-label">Viz</div>
+        </div>
+        <div>
+          <div class="bar" style="height: 180px;"></div>
+          <div class="bar-label">Stats</div>
+        </div>
+        <div>
+          <div class="bar" style="height: 100px;"></div>
+          <div class="bar-label">SQL</div>
+        </div>
+        <div>
+          <div class="bar" style="height: 120px;"></div>
+          <div class="bar-label">ML</div>
+        </div>
+        <div>
+          <div class="bar" style="height: 140px;"></div>
+          <div class="bar-label">Python</div>
+        </div>
+      </div>
+      <button class="close-btn" onclick="closeStats()">Back to Profile</button>
+    </div>
+  </div>
+</body>
+</html>
