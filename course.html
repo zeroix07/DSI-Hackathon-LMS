@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Choose Your Data Path</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #ccc;
+    }
+    .logo-section {
+      display: flex;
+      align-items: center;
+    }
+    .logo-section img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: black;
+    }
+
+    .main-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 80px);
+      padding: 20px;
+    }
+    .map-img {
+      flex: 1;
+      text-align: center;
+    }
+    .map-img img {
+      max-width: 300px;
+    }
+    .path-choice {
+      flex: 1;
+      text-align: center;
+    }
+    .path-choice h2 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .path-choice p {
+      margin-bottom: 30px;
+    }
+    .path-choice button {
+      padding: 12px 24px;
+      background: #ffc107;
+      border: 1px solid #000;
+      border-radius: 6px;
+      margin: 0 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+      background: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-section">
+      <img src="logo.png" alt="Logo" />
+      <strong>AI Education System</strong>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#">Course</a>
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <div id="role-selection" class="main-container">
+    <div class="map-img">
+      <img src="image/Map.svg" alt="Map Path"/>
+    </div>
+    <div class="path-choice">
+        <h2>Pick Your Data Path</h2>
+        <p>Select the path that aligns with your career goals in the field of data.</p>
+        <button onclick="showQuestion()">Data Analyst</button>
+        <button onclick="showQuestion()">Data Science</button>
+    </div>
+  </div>
+  <div id="question-section" class="main-container" style="display: none; flex-wrap: wrap; justify-content: space-between;">
+    <div style="flex: 1; padding: 40px;">
+      <h2>Question 1:<br>Data Preparation</h2>
+      <p>What is your approach for cleaning and preparing data for analysis?</p>
+    </div>
+    <div style="flex: 1; padding: 40px;">
+      <label for="answer"><strong>Your Answer</strong></label><br>
+      <input type="text" id="answer" placeholder="Describe your process..." style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;" />
+      <small>e.g., dealing with missing values, data normalization</small><br><br>
+      <button style="padding: 12px 24px; background: #ffc107; border: 1px solid #000; font-weight: bold;">Next</button>
+    </div>
+  </div>
+  <footer>
+    &copy; 2025 by Hackathon Team
+  </footer>
+</body>
+<script>
+    function showQuestion() {
+      document.getElementById("role-selection").style.display = "none";
+      document.getElementById("question-section").style.display = "flex";
+    }
+  </script>
+</html>
