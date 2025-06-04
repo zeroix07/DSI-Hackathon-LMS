@@ -599,7 +599,19 @@
       // Update UI with user info
       document.getElementById('user-name').textContent = `Welcome, ${currentUser.username}!`;
       
-      const specializationDisplay = currentUser.specialization === 'data_engineer' ? 'Data Engineer' : 'Data Scientist';
+      let specializationDisplay;
+      switch(currentUser.specialization) {
+        case 'data_engineer':
+          specializationDisplay = 'Data Engineer';
+          break;
+        case 'data_analyst':
+          specializationDisplay = 'Data Analyst';
+          break;
+        case 'data_scientist':
+        default:
+          specializationDisplay = 'Data Scientist';
+          break;
+      }
       document.getElementById('user-badge').textContent = `${specializationDisplay} - ${currentUser.level.charAt(0).toUpperCase() + currentUser.level.slice(1)}`;
     }
 
@@ -629,6 +641,7 @@
     // Generate demo learning material
     function generateDemoMaterial() {
       const isDataEngineer = currentUser.specialization === 'data_engineer';
+      const isDataAnalyst = currentUser.specialization === 'data_analyst';
       
       if (isDataEngineer) {
         return {
@@ -721,6 +734,115 @@ load_to_warehouse(transformed_data, warehouse_engine)`,
               'Use appropriate data formats (Parquet for analytics, Avro for streaming)',
               'Implement proper logging for debugging and auditing',
               'Test pipelines with realistic data volumes and edge cases'
+            ]
+          }
+        };
+      } else if (isDataAnalyst) {
+        return {
+          id: 'demo-material-da',
+          title: 'SQL Fundamentals for Data Analysis',
+          subtitle: 'Master SQL queries to extract insights from data',
+          learning_objectives: [
+            'Understand SQL syntax and basic query structure',
+            'Learn to filter and sort data effectively',
+            'Master aggregate functions and grouping',
+            'Create joins to combine data from multiple tables',
+            'Write subqueries and window functions for advanced analysis'
+          ],
+          prerequisites: [
+            'Basic understanding of databases and tables',
+            'Familiarity with spreadsheet software (Excel/Google Sheets)',
+            'Understanding of basic mathematical operations',
+            'Knowledge of data types (numbers, text, dates)'
+          ],
+          content: {
+            theory: {
+              overview: `SQL (Structured Query Language) is the foundation of data analysis. It allows you to retrieve, filter, aggregate, and manipulate data stored in relational databases. For data analysts, SQL is essential for extracting insights, creating reports, and answering business questions through data exploration.
+              
+              SQL follows a declarative approach - you specify what you want, not how to get it. This makes it powerful for data analysis tasks like calculating metrics, identifying trends, and creating summaries that drive business decisions.`,
+              key_concepts: [
+                'SELECT statements: Retrieving specific columns and rows',
+                'WHERE clauses: Filtering data based on conditions',
+                'GROUP BY: Aggregating data for summary statistics',
+                'JOIN operations: Combining data from multiple tables',
+                'Aggregate functions: COUNT, SUM, AVG, MIN, MAX',
+                'Window functions: Advanced analytics and ranking'
+              ]
+            },
+            practical_examples: [
+              {
+                title: 'Basic Data Exploration',
+                description: 'Learn to explore and understand your dataset using fundamental SQL queries.',
+                code_snippet: `-- Get overview of the sales table
+SELECT COUNT(*) as total_records,
+       MIN(order_date) as earliest_date,
+       MAX(order_date) as latest_date,
+       COUNT(DISTINCT customer_id) as unique_customers
+FROM sales;
+
+-- Find top 10 customers by total purchase amount
+SELECT customer_id,
+       COUNT(*) as order_count,
+       SUM(amount) as total_spent,
+       AVG(amount) as avg_order_value
+FROM sales
+GROUP BY customer_id
+ORDER BY total_spent DESC
+LIMIT 10;
+
+-- Analyze sales trends by month
+SELECT DATE_TRUNC('month', order_date) as month,
+       COUNT(*) as orders,
+       SUM(amount) as revenue,
+       AVG(amount) as avg_order_value
+FROM sales
+WHERE order_date >= '2023-01-01'
+GROUP BY month
+ORDER BY month;`,
+                explanation: 'These queries demonstrate fundamental data analysis techniques: getting data overview, identifying top performers, and analyzing trends over time. These are common starting points for most business analysis projects.'
+              },
+              {
+                title: 'Advanced Data Analysis with Joins',
+                description: 'Combine data from multiple tables to create comprehensive business insights.',
+                code_snippet: `-- Customer analysis with demographic data
+SELECT c.customer_id,
+       c.customer_name,
+       c.age_group,
+       c.location,
+       COUNT(s.order_id) as total_orders,
+       SUM(s.amount) as total_spent,
+       AVG(s.amount) as avg_order_value,
+       MAX(s.order_date) as last_purchase_date
+FROM customers c
+LEFT JOIN sales s ON c.customer_id = s.customer_id
+WHERE s.order_date >= CURRENT_DATE - INTERVAL '12 months'
+GROUP BY c.customer_id, c.customer_name, c.age_group, c.location
+HAVING COUNT(s.order_id) > 0
+ORDER BY total_spent DESC;
+
+-- Product performance analysis
+SELECT p.product_name,
+       p.category,
+       COUNT(s.order_id) as times_sold,
+       SUM(s.quantity) as total_quantity,
+       SUM(s.amount) as total_revenue,
+       AVG(s.amount) as avg_sale_price
+FROM products p
+JOIN sales s ON p.product_id = s.product_id
+GROUP BY p.product_id, p.product_name, p.category
+ORDER BY total_revenue DESC;`,
+                explanation: 'Joins allow you to combine customer, sales, and product data to create comprehensive business insights. This enables deeper analysis of customer behavior, product performance, and business trends.'
+              }
+            ],
+            best_practices: [
+              'Always start with exploratory queries to understand your data',
+              'Use meaningful aliases for tables and columns to improve readability',
+              'Comment your complex queries to explain the business logic',
+              'Be specific with date ranges and filters to improve performance',
+              'Use aggregate functions with GROUP BY for summary analysis',
+              'Validate your results by cross-checking with known metrics',
+              'Test queries on small datasets before running on large tables',
+              'Document your analysis process for reproducibility'
             ]
           }
         };
@@ -1077,10 +1199,13 @@ correlation_analysis(df, target_column='target_variable')`,
       
       // Context-aware responses based on specialization
       const isDataEngineer = currentUser.specialization === 'data_engineer';
+      const isDataAnalyst = currentUser.specialization === 'data_analyst';
       
       if (message.includes('explain') || message.includes('what is')) {
         if (isDataEngineer) {
           return "Great question! In data engineering, it's important to understand the underlying architecture. Let me break this down step by step with a practical example that you might encounter in a real pipeline...";
+        } else if (isDataAnalyst) {
+          return "Excellent question! In data analysis, this concept is crucial for extracting business insights. Let me explain this with a practical SQL example and show you how it applies to real business scenarios...";
         } else {
           return "Excellent question! In data science, this concept is fundamental to understanding patterns in data. Let me explain this with a statistical perspective and show you how it applies to real-world analysis...";
         }
@@ -1089,6 +1214,8 @@ correlation_analysis(df, target_column='target_variable')`,
       if (message.includes('example') || message.includes('show me')) {
         if (isDataEngineer) {
           return "Here's a practical example you might see in production: Imagine you're building a real-time data pipeline for an e-commerce platform. You'd need to handle order data, user events, and inventory updates. The key is designing for scale and reliability...";
+        } else if (isDataAnalyst) {
+          return "Let me give you a concrete example: Suppose you're analyzing sales performance for a retail company. You'd write SQL queries to identify trends, calculate key metrics, and create reports that help management make decisions. Here's how you'd approach it...";
         } else {
           return "Let me give you a concrete example: Suppose you're analyzing customer behavior data. You'd start by examining the distribution of key metrics, looking for patterns, and identifying potential outliers. Here's how you'd approach it...";
         }
@@ -1109,6 +1236,8 @@ correlation_analysis(df, target_column='target_variable')`,
       if (message.includes('project') || message.includes('real world')) {
         if (isDataEngineer) {
           return "For real-world projects, you'll often deal with messy data, changing requirements, and scale challenges. Here's what I'd recommend starting with to build practical experience...";
+        } else if (isDataAnalyst) {
+          return "Real-world data analysis projects are exciting! You'll work with business stakeholders, create reports, and answer questions that drive decisions. Here's how to approach your first analysis project...";
         } else {
           return "Real-world data science projects are exciting! They often involve business stakeholders, messy data, and iterative analysis. Here's how to approach your first project...";
         }
