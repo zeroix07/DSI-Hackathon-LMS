@@ -236,218 +236,221 @@ class EducationAgent:
         return recommendations.get(level, "Terus semangat belajar!")
     
     def search_and_create_personalized_material(self, specialization: str, level: str, user_id: str) -> Dict:
-        """Create personalized learning material using AI and web search"""
-        
-        try:
-            print(f"Starting material creation for user: {user_id}, spec: {specialization}, level: {level}")
+            """Create personalized learning material using AI and web search"""
             
-            # Define learning path based on specialization and level
-            learning_paths = {
-                "data_engineer": {
-                    "pemula": ["SQL Fundamentals", "Python for Data", "Basic ETL", "Data Modeling Basics"],
-                    "menengah": ["Advanced ETL", "Data Warehousing", "Apache Kafka", "Cloud Data Services"],
-                    "mahir": ["Real-time Data Streaming", "Data Pipeline Optimization", "Distributed Systems", "Data Governance"]
-                },
-                "data_scientist": {
-                    "pemula": ["Statistics Basics", "Python for Data Science", "Data Visualization", "Basic Machine Learning"],
-                    "menengah": ["Advanced ML Algorithms", "Feature Engineering", "Model Evaluation", "Deep Learning Basics"],
-                    "mahir": ["Advanced Deep Learning", "MLOps", "Time Series Analysis", "Advanced Statistics"]
-                },
-                "data_analyst": {
-                    "pemula": ["SQL Basics", "Excel Proficiency", "Basic Visualization", "Data Cleaning Fundamentals"],
-                    "menengah": ["Advanced BI Tools", "Statistical Analysis", "Dashboard Design", "Business Intelligence"],
-                    "mahir": ["Advanced Analytics", "Predictive Modeling", "Business Strategy", "Data-Driven Decision Making"]
+            try:
+                print(f"Starting material creation for user: {user_id}, spec: {specialization}, level: {level}")
+                
+                # Define learning path based on specialization and level
+                learning_paths = {
+                    "data_engineer": {
+                        "pemula": ["Dasar SQL", "Python untuk Data", "ETL Dasar", "Dasar Pemodelan Data"],
+                        "menengah": ["ETL Lanjutan", "Data Warehousing", "Apache Kafka", "Layanan Data Cloud"],
+                        "mahir": ["Streaming Data Real-time", "Optimasi Pipeline Data", "Sistem Terdistribusi", "Tata Kelola Data"]
+                    },
+                    "data_scientist": {
+                        "pemula": ["Dasar Statistik", "Python untuk Data Science", "Visualisasi Data", "Machine Learning Dasar"],
+                        "menengah": ["Algoritma ML Lanjutan", "Feature Engineering", "Evaluasi Model", "Dasar Deep Learning"],
+                        "mahir": ["Deep Learning Lanjutan", "MLOps", "Analisis Time Series", "Statistik Lanjutan"]
+                    },
+                    "data_analyst": {
+                        "pemula": ["Dasar SQL", "Keahlian Excel", "Visualisasi Dasar", "Dasar Pembersihan Data"],
+                        "menengah": ["Tools BI Lanjutan", "Analisis Statistik", "Desain Dashboard", "Business Intelligence"],
+                        "mahir": ["Analitik Lanjutan", "Pemodelan Prediktif", "Strategi Bisnis", "Pengambilan Keputusan Berbasis Data"]
+                    }
                 }
-            }
-            # Validate inputs
-            if specialization not in learning_paths:
-                raise ValueError(f"Invalid specialization: {specialization}")
-            
-            if level not in learning_paths[specialization]:
-                raise ValueError(f"Invalid level: {level} for specialization: {specialization}")
-            
-            topics = learning_paths[specialization][level]
-            current_topic = topics[0]
-            
-            print(f"Current topic: {current_topic}")
-            
-            # Skip search for now to isolate the issue
-            content_sources = []
-            
-            # Generate material with a very simple prompt
-            spec_name = "Data Engineering" if specialization == "data_engineer" else "Data Science" if specialization == "data_scientist" else "Data Analyst" if specialization == "data_analysis" else "general"
-
-            prompt = f"""Create a learning material in JSON format for {spec_name} topic: {current_topic} at {level} level.
+                # Validate inputs
+                if specialization not in learning_paths:
+                    raise ValueError(f"Invalid specialization: {specialization}")
+                
+                if level not in learning_paths[specialization]:
+                    raise ValueError(f"Invalid level: {level} for specialization: {specialization}")
+                
+                topics = learning_paths[specialization][level]
+                current_topic = topics[0]
+                
+                print(f"Current topic: {current_topic}")
+                
+                # Skip search for now to isolate the issue
+                content_sources = []
+                
+                # Generate material with a very simple prompt
+                spec_name = "Data Engineering" if specialization == "data_engineer" else "Data Science" if specialization == "data_scientist" else "Data Analyst" if specialization == "data_analysis" else "umum"
     
-                    Return only valid JSON with this exact structure:
-                    {{
-                        "title": "{current_topic} for {spec_name}",
-                        "subtitle": "Learn {current_topic} step by step",
-                        "introduction": "Introduction to {current_topic}",
-                        "learning_objectives": [
-                            "Understand {current_topic} concepts",
-                            "Apply {current_topic} in practice"
-                        ],
-                        "prerequisites": [
-                            "Basic programming knowledge"
-                        ],
-                        "content": {{
-                            "theory": {{
-                                "overview": "Overview of {current_topic}",
-                                "key_concepts": [
-                                    "Key concept 1",
-                                    "Key concept 2"
+                prompt = f"""
+                        kamu adalah seorang pembuat materi profesional {current_topic} untuk {spec_name} di level {level} yang telah berkecimpung selama 10 tahun
+                
+                        Buatlah materi pembelajaran dalam format JSON untuk topik {spec_name}: {current_topic} di level {level}.
+        
+                        Kembalikan hanya JSON yang valid dengan struktur ini:
+                        {{
+                            "title": "{current_topic} untuk {spec_name}",
+                            "subtitle": "Pelajari {current_topic} langkah demi langkah",
+                            "introduction": "Pengenalan terhadap {current_topic}",
+                            "learning_objectives": [
+                                "Memahami konsep {current_topic}",
+                                "Menerapkan {current_topic} dalam praktik"
+                            ],
+                            "prerequisites": [
+                                "Pengetahuan dasar pemrograman"
+                            ],
+                            "content": {{
+                                "theory": {{
+                                    "overview": "Gambaran umum tentang {current_topic}",
+                                    "key_concepts": [
+                                        "Konsep kunci 1",
+                                        "Konsep kunci 2"
+                                    ]
+                                }},
+                                "practical_examples": [
+                                    {{
+                                        "title": "Contoh Dasar",
+                                        "description": "Contoh sederhana dari {current_topic}",
+                                        "code_snippet": "# Contoh kode di sini",
+                                        "explanation": "Contoh ini menunjukkan penggunaan dasar"
+                                    }}
+                                ],
+                                "best_practices": [
+                                    "Ikuti standar industri",
+                                    "Jaga kode tetap bersih dan terdokumentasi"
                                 ]
                             }},
-                            "practical_examples": [
-                                {{
-                                    "title": "Basic Example",
-                                    "description": "Simple example of {current_topic}",
-                                    "code_snippet": "# Sample code here",
-                                    "explanation": "This example shows basic usage"
-                                }}
-                            ],
-                            "best_practices": [
-                                "Follow industry standards",
-                                "Keep code clean and documented"
-                            ]
-                        }},
-                        "estimated_duration": "2-3 hours"
-                    }}
+                            "estimated_duration": "2-3 jam"
+                        }}
+                        
+                        Kembalikan HANYA JSON, tanpa teks lain."""
+                
+                print("Sending request to AI...")
+                
+                try:
+                    response = self.groq.chat.completions.create(
+                        messages=[{"role": "user", "content": prompt}],
+                        model=self.model,
+                        temperature=0.1,
+                        max_tokens=1500
+                    )
                     
-                    Return ONLY the JSON, no other text."""
-            
-            print("Sending request to AI...")
-            
-            try:
-                response = self.groq.chat.completions.create(
-                    messages=[{"role": "user", "content": prompt}],
-                    model=self.model,
-                    temperature=0.1,
-                    max_tokens=1500
-                )
+                    if not response or not response.choices:
+                        raise ValueError("Empty response from AI")
+                    
+                    content = response.choices[0].message.content
+                    
+                    if not content:
+                        raise ValueError("Empty content from AI response")
+                        
+                    content = content.strip()
+                    print(f"AI response length: {len(content)}")
+                    print(f"AI response first 100 chars: {content[:100]}")
+                    
+                except Exception as ai_error:
+                    print(f"AI generation error: {ai_error}")
+                    # Use fallback material instead of failing
+                    return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
                 
-                if not response or not response.choices:
-                    raise ValueError("Empty response from AI")
+                # Clean up the content
+                if content.startswith('```json'):
+                    content = content[7:]
+                    if content.endswith('```'):
+                        content = content[:-3]
+                elif content.startswith('```'):
+                    content = content[3:]
+                    if content.endswith('```'):
+                        content = content[:-3]
                 
-                content = response.choices[0].message.content
+                content = content.strip()
                 
                 if not content:
-                    raise ValueError("Empty content from AI response")
-                    
-                content = content.strip()
-                print(f"AI response length: {len(content)}")
-                print(f"AI response first 100 chars: {content[:100]}")
+                    print("Content is empty after cleanup")
+                    return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
                 
-            except Exception as ai_error:
-                print(f"AI generation error: {ai_error}")
-                # Use fallback material instead of failing
-                return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
-            
-            # Clean up the content
-            if content.startswith('```json'):
-                content = content[7:]
-                if content.endswith('```'):
-                    content = content[:-3]
-            elif content.startswith('```'):
-                content = content[3:]
-                if content.endswith('```'):
-                    content = content[:-3]
-            
-            content = content.strip()
-            
-            if not content:
-                print("Content is empty after cleanup")
-                return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
-            
-            print("Attempting to parse JSON...")
-            
-            try:
-                material = json.loads(content)
-                print("JSON parsing successful")
-            except json.JSONDecodeError as json_error:
-                print(f"JSON parsing error: {json_error}")
-                print(f"Content that failed to parse: {repr(content)}")
-                return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
-            
-            # Add metadata
-
-            
-            material.update({
-                "id": str(uuid.uuid4()),
-                "specialization": specialization,
-                "level": level,
-                "user_id": user_id,
-                "sources": content_sources,
-                "created_at": datetime.now().isoformat(),
-                "current_topic_index": 0,
-                "total_topics": len(topics),
-                "learning_path": topics
-            })
-            
-            print(f"Material created successfully with ID: {material['id']}")
-            return material
-            
-        except Exception as e:
-            print(f"Unexpected error in material creation: {e}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            
-            # Return fallback material instead of raising exception
-            try:
-                return self._create_fallback_material(specialization, level, topics[0] if 'topics' in locals() else "Basic Topic", topics if 'topics' in locals() else ["Basic Topic"], user_id)
-            except:
-                raise HTTPException(status_code=500, detail=f"Failed to create learning material: {str(e)}")
+                print("Attempting to parse JSON...")
+                
+                try:
+                    material = json.loads(content)
+                    print("JSON parsing successful")
+                except json.JSONDecodeError as json_error:
+                    print(f"JSON parsing error: {json_error}")
+                    print(f"Content that failed to parse: {repr(content)}")
+                    return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
+                
+                # Add metadata
+    
+                
+                material.update({
+                    "id": str(uuid.uuid4()),
+                    "specialization": specialization,
+                    "level": level,
+                    "user_id": user_id,
+                    "sources": content_sources,
+                    "created_at": datetime.now().isoformat(),
+                    "current_topic_index": 0,
+                    "total_topics": len(topics),
+                    "learning_path": topics
+                })
+                
+                print(f"Material created successfully with ID: {material['id']}")
+                return material
+                
+            except Exception as e:
+                print(f"Unexpected error in material creation: {e}")
+                import traceback
+                print(f"Traceback: {traceback.format_exc()}")
+                
+                # Return fallback material instead of raising exception
+                try:
+                    return self._create_fallback_material(specialization, level, topics[0] if 'topics' in locals() else "Topik Dasar", topics if 'topics' in locals() else ["Topik Dasar"], user_id)
+                except:
+                    raise HTTPException(status_code=500, detail=f"Gagal membuat materi pembelajaran: {str(e)}")
     
     def _create_fallback_material(self, specialization: str, level: str, current_topic: str, topics: list, user_id: str) -> Dict:
         """Create a fallback material when AI generation fails"""
         import uuid
         from datetime import datetime
         
-        spec_name = "Data Engineering" if specialization == "data_engineer" else "Data Science" if specialization == "data_scientist" else "Data Analyst" if specialization == "data_analyst" else "General"
+        spec_name = "Data Engineering" if specialization == "data_engineer" else "Data Science" if specialization == "data_scientist" else "Data Analyst" if specialization == "data_analyst" else "Umum"
 
         material = {
             "title": f"{current_topic} - {spec_name}",
-            "subtitle": f"Level {level.title()} Learning Material",
-            "introduction": f"Welcome to {current_topic} learning material. This comprehensive guide will help you master the fundamentals and advance your skills in {spec_name}.",
+            "subtitle": f"Materi Pembelajaran Level {level.title()}",
+            "introduction": f"Selamat datang di materi pembelajaran {current_topic}. Panduan komprehensif ini akan membantu Anda menguasai dasar-dasar dan mengembangkan keterampilan Anda dalam {spec_name}.",
             "learning_objectives": [
-                f"Understand core concepts of {current_topic}",
-                f"Apply {current_topic} techniques in real-world scenarios",
-                "Build practical skills through hands-on exercises",
-                "Develop best practices for professional work"
+                f"Memahami konsep inti dari {current_topic}",
+                f"Menerapkan teknik {current_topic} dalam skenario dunia nyata",
+                "Membangun keterampilan praktis melalui latihan langsung",
+                "Mengembangkan praktik terbaik untuk pekerjaan profesional"
             ],
             "prerequisites": [
-                "Basic programming knowledge",
-                "Familiarity with data concepts",
-                "Willingness to learn and practice"
+                "Pengetahuan dasar pemrograman",
+                "Familiaritas dengan konsep data",
+                "Kemauan untuk belajar dan berlatih"
             ],
             "content": {
                 "theory": {
-                    "overview": f"{current_topic} is a fundamental concept in {spec_name}. This section covers the essential theory and principles you need to understand.",
+                    "overview": f"{current_topic} adalah konsep fundamental dalam {spec_name}. Bagian ini mencakup teori dan prinsip esensial yang perlu Anda pahami.",
                     "key_concepts": [
-                        f"Introduction to {current_topic}",
-                        "Core principles and methodologies",
-                        "Industry standards and best practices",
-                        "Common use cases and applications"
+                        f"Pengenalan terhadap {current_topic}",
+                        "Prinsip inti dan metodologi",
+                        "Standar industri dan praktik terbaik",
+                        "Kasus penggunaan umum dan aplikasi"
                     ]
                 },
                 "practical_examples": [
                     {
-                        "title": f"Basic {current_topic} Implementation",
-                        "description": f"A practical example demonstrating {current_topic} concepts",
-                        "code_snippet": f"# Example implementation of {current_topic}\n# This is a basic example to get you started\n\nprint('Learning {current_topic}')",
-                        "explanation": f"This example demonstrates the basic implementation of {current_topic}. Start with simple concepts and gradually build complexity."
+                        "title": f"Implementasi Dasar {current_topic}",
+                        "description": f"Contoh praktis yang mendemonstrasikan konsep {current_topic}",
+                        "code_snippet": f"# Contoh implementasi {current_topic}\n# Ini adalah contoh dasar untuk memulai\n\nprint('Belajar {current_topic}')",
+                        "explanation": f"Contoh ini mendemonstrasikan implementasi dasar dari {current_topic}. Mulai dengan konsep sederhana dan secara bertahap membangun kompleksitas."
                     }
                 ],
                 "best_practices": [
-                    "Follow industry-standard conventions",
-                    "Write clean, readable, and maintainable code",
-                    "Document your work thoroughly",
-                    "Test your implementations regularly",
-                    "Stay updated with latest trends and tools"
+                    "Ikuti konvensi standar industri",
+                    "Tulis kode yang bersih, mudah dibaca, dan dapat dipelihara",
+                    "Dokumentasikan pekerjaan Anda dengan menyeluruh",
+                    "Uji implementasi Anda secara teratur",
+                    "Tetap update dengan tren dan alat terbaru"
                 ]
             },
-            "estimated_duration": "2-4 hours",
+            "estimated_duration": "2-4 jam",
             "id": str(uuid.uuid4()),
             "specialization": specialization,
             "level": level,
