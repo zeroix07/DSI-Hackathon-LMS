@@ -63,12 +63,14 @@
       background-color: #e6f1f8;
       padding: 60px 20px;
       display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
     .paths-text {
-      flex: 1 1 40%;
-      padding: 20px;
+      max-width: 800px;
+      margin-bottom: 50px;
+      padding: 0 20px;
     }
     .paths-text h2 {
       font-size: 2.5rem;
@@ -77,27 +79,48 @@
     }
     .paths-text p {
       font-size: 1rem;
+      line-height: 1.6;
     }
     .path-content {
-      flex: 1 1 55%;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 30px;
+      max-width: 1400px;
+      width: 100%;
       flex-wrap: wrap;
-      padding: 20px;
     }
     .path-box {
-      flex: 1 1 45%;
-      margin: 20px 10px;
+      flex: 0 1 380px;
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       text-align: center;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .path-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
     }
     .path-box img {
       width: 80px;
       height: 80px;
-      margin-bottom: 10px;
+      margin: 0 auto 20px auto;
+      display: block;
     }
     .path-box h3 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .path-box p {
+      line-height: 1.6;
+      color: #666;
+      text-align: center;
     }
     .cta-section {
       background-color: #6b8ed6;
@@ -127,17 +150,126 @@
       font-size: 0.9rem;
       background: #f1f1f1;
     }
+
+    /* Responsive design for paths section */
+    @media (max-width: 768px) {
+      .paths-text {
+        margin-bottom: 30px;
+      }
+      
+      .paths-text h2 {
+        font-size: 2rem;
+      }
+      
+      .path-content {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+      }
+      
+      .path-box {
+        flex: none;
+        width: 100%;
+        max-width: 400px;
+        min-height: auto;
+        padding: 25px;
+      }
+      
+      .path-box h3 {
+        font-size: 1.5rem;
+      }
+    }
+    
+    .modal-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+    }
+    
+    .tab-button {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .tab-button.active {
+      border-bottom-color: #ffc107;
+      color: #333;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .quick-start-option {
+      background: #f9f9f9;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 2px solid #ddd;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .quick-start-option:hover {
+      border-color: #ffc107;
+      background: #fff9e6;
+    }
+    
+    .guest-demo {
+      text-align: center;
+      padding: 20px;
+      background: #e8f5e8;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    
+    .status-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+      z-index: 1000;
+      display: none;
+    }
+    
+    .status-indicator.success {
+      background: #28a745;
+    }
+    
+    .status-indicator.error {
+      background: #dc3545;
+    }
+    
+    .status-indicator.warning {
+      background: #ffc107;
+      color: black;
+    }
   </style>
 </head>
 <body>
+  <!-- Status Indicator -->
+  <div id="statusIndicator" class="status-indicator"></div>
+
   <header>
     <div class="logo-section">
-      <img src="logo.png" alt="Logo">
+      <img src="image/logo.svg"Logo">
       <strong>AI Education System</strong>
     </div>
     <nav>
       <a href="#">Home</a>
-      <a href="#">Course</a>
+      <a href="course.html">Course</a>
       <a href="#">About Us</a>
       <a href="#">Contact</a>
     </nav>
@@ -156,13 +288,13 @@
   <section class="paths-section">
     <div class="paths-text">
       <h2>Learning Paths</h2>
-      <p>We don’t believe in one-size-fits-all. Our platform dynamically builds your learning journey based on your current skills and your interest.</p>
+      <p>We don't believe in one-size-fits-all. Our platform dynamically builds your learning journey based on your current skills and your interest.</p>
     </div>
     <div class="path-content">
       <div class="path-box">
         <img src="image/frame.svg" alt="Data Analyst Icon">
-        <h3>Data Analyst</h3>
-        <p>Bridge between raw data and meaningful business decisions. They collect, clean, and interpret data to identify trends, solve problems, and help companies make informed choices. Analysts often work with structured data from spreadsheets, databases, and reports, using tools like SQL, Excel, and visualization platforms.</p>
+        <h3>Data Engineer</h3>
+        <p>Build the infrastructure that powers data-driven decisions. Design and maintain systems that collect, store, and process large volumes of data. Work with databases, ETL pipelines, and cloud platforms to ensure data flows efficiently across organizations.</p>
       </div>
       <div class="path-box">
         <img src="image/Data Science.svg" alt="Data Science Icon">
@@ -172,61 +304,350 @@
     </div>
   </section>
   
-  <!-- Modal -->
+  <!-- Enhanced Modal with Backend Integration -->
 <div id="authModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); z-index:999;">
-    <div style="background:#eaf1ff; width:90%; max-width:600px; margin:100px auto; padding:30px; border-radius:8px; display:flex; flex-wrap:wrap; gap:20px;">
-      <div style="flex:1;">
-        <img src="image/login.svg" alt="Login Illustration" style="width:100%;">
-      </div>
-      <div style="flex:1;">
-        <label><strong>Email Address</strong></label><br>
-        <input type="email" id="email" placeholder="Enter your email" style="width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc;"><br>
-        <small>We will never share your email.</small><br><br>
-  
-        <label><strong>Password</strong></label><br>
-        <input type="password" id="password" placeholder="Enter your password" style="width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc;"><br>
-        <small>Make sure your password is at least 8 characters.</small><br><br>
-  
-        <button onclick="login()" style="padding:10px 20px;background:black;color:white;border:none;border-radius:5px;margin-right:10px;">LOG IN</button>
-        <button onclick="signup()" style="padding:10px 20px;background:#ffc107;border:1px solid #000;border-radius:5px;">SIGN UP</button>
+    <div style="background:#eaf1ff; width:90%; max-width:700px; margin:50px auto; padding:0; border-radius:8px; overflow:hidden;">
+      
+      <!-- Modal Header with Tabs -->
+      <div class="modal-content" style="padding:30px;">
+        <div class="modal-tabs">
+          <button class="tab-button active" onclick="switchTab('login')">Login</button>
+          <button class="tab-button" onclick="switchTab('signup')">Sign Up</button>
+          <button class="tab-button" onclick="switchTab('demo')">Try Demo</button>
+        </div>
+
+        <!-- Login Tab -->
+        <div id="login-tab" class="tab-content active">
+          <div style="display:flex; flex-wrap:wrap; gap:20px; align-items:center;">
+            <div style="flex:1; min-width:250px;">
+              <img src="image/login.svg" alt="Login Illustration" style="width:100%; max-width:300px;">
+            </div>
+            <div style="flex:1; min-width:300px;">
+              <h3 style="margin-bottom:15px;">Welcome Back!</h3>
+              <p style="margin-bottom:20px; color:#666;">Continue your personalized learning journey.</p>
+              
+              <label><strong>Email Address</strong></label><br>
+              <input type="email" id="loginEmail" placeholder="Enter your email" 
+                     style="width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc;"><br>
+              <small>We'll never share your email.</small><br><br>
+
+              <label><strong>Password</strong></label><br>
+              <input type="password" id="loginPassword" placeholder="Enter your password" 
+                     style="width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc;"><br>
+              <small>Make sure your password is at least 8 characters.</small><br><br>
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button onclick="handleLogin()" 
+                        style="padding:10px 20px;background:black;color:white;border:none;border-radius:5px;cursor:pointer;flex:1;">
+                  LOG IN
+                </button>
+                <button onclick="forgotPassword()" 
+                        style="padding:10px 20px;background:#f8f9fa;border:1px solid #ddd;border-radius:5px;cursor:pointer;">
+                  Forgot?
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sign Up Tab -->
+        <div id="signup-tab" class="tab-content">
+          <div style="display:flex; flex-wrap:wrap; gap:20px; align-items:center;">
+            <div style="flex:1; min-width:250px;">
+              <img src="image/login.svg" alt="Signup Illustration" style="width:100%; max-width:300px;">
+            </div>
+            <div style="flex:1; min-width:300px;">
+              <h3 style="margin-bottom:15px;">Start Your Journey!</h3>
+              <p style="margin-bottom:20px; color:#666;">Create an account to begin personalized learning.</p>
+              
+              <label><strong>Full Name</strong></label><br>
+              <input type="text" id="signupName" placeholder="Enter your full name" 
+                     style="width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc;"><br><br>
+
+              <label><strong>Email Address</strong></label><br>
+              <input type="email" id="signupEmail" placeholder="Enter your email" 
+                     style="width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc;"><br><br>
+
+              <label><strong>Choose Your Path</strong></label><br>
+              <select id="signupPath" style="width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc;">
+                <option value="">Select your learning path</option>
+                <option value="data_analyst">Data Analyst</option>
+                <option value="data_engineer">Data Engineer</option>
+                <option value="data_scientist">Data Scientist</option>
+              </select><br><br>
+
+              <button onclick="handleSignup()" 
+                      style="padding:10px 20px;background:#ffc107;border:1px solid #000;border-radius:5px;cursor:pointer;width:100%;font-weight:bold;">
+                CREATE ACCOUNT & START ASSESSMENT
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Demo Tab -->
+        <div id="demo-tab" class="tab-content">
+          <div class="guest-demo">
+            <h3 style="margin-bottom:15px;">🚀 Try Our AI Education System</h3>
+            <p style="margin-bottom:20px;">Experience our platform without creating an account. Choose a demo path below:</p>
+            
+            <div class="quick-start-option" onclick="startDemo('data_analyst')">
+              <h4>📊 Data Analyst Demo</h4>
+              <p>Experience data analysis, visualization, and business intelligence challenges</p>
+            </div>
+            
+            <div class="quick-start-option" onclick="startDemo('data_engineer')">
+              <h4>🔧 Data Engineer Demo</h4>
+              <p>Experience database design, ETL pipelines, and data infrastructure challenges</p>
+            </div>
+            
+            <div class="quick-start-option" onclick="startDemo('data_scientist')">
+              <h4>📊 Data Scientist Demo</h4>
+              <p>Try machine learning, statistical analysis, and predictive modeling scenarios</p>
+            </div>
+            
+            <div style="margin-top:20px; padding:15px; background:#fff3cd; border-radius:5px;">
+              <small><strong>Note:</strong> Demo progress won't be saved. Create an account for full personalized experience.</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Close button -->
+        <button onclick="closeModal()" 
+                style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:24px; cursor:pointer;">
+          ×
+        </button>
       </div>
     </div>
   </div>
 
-  
   <section class="cta-section">
     <h2>Start Your Personalized Data Journey!</h2>
-    <p>Whether you're aiming to become a Data Analyst or a Data Scientist, your custom learning path begins here. Sign up and let our AI guide you—step by step—toward a career in data.</p>
-    <a href="profile.html"><button>SIGN UP/LOG IN</button></a>
+    <p>Whether you're aiming to become a Data Engineer or a Data Scientist, your custom learning path begins here. Sign up and let our AI guide you—step by step—toward a career in data.</p>
+    <a href="#" onclick="openModal()"><button>START YOUR JOURNEY</button></a>
   </section>
 
   <footer>
     &copy; 2025 by Hackathon Team
   </footer>
-</body>
 
-<script>
-    document.querySelector('.cta-section a button').addEventListener('click', function (e) {
-      e.preventDefault(); // prevent default <a> navigation
+  <script>
+    // Global variables
+    let currentUser = null;
+    const API_BASE_URL = 'http://localhost:8000/api'; // Update this to match your backend
+    
+    // API utility function
+    async function makeAPICall(endpoint, method = 'GET', data = null) {
+      try {
+        showStatus('Connecting to AI system...', 'warning');
+        
+        const config = {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        };
+        
+        if (data) {
+          config.body = JSON.stringify(data);
+        }
+        
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        
+        if (!response.ok) {
+          throw new Error(`Server responded with status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        hideStatus();
+        return result;
+      } catch (error) {
+        console.error('API call failed:', error);
+        showStatus(`Connection failed: ${error.message}`, 'error');
+        return null;
+      }
+    }
+
+    // Status indicator functions
+    function showStatus(message, type = 'warning') {
+      const indicator = document.getElementById('statusIndicator');
+      indicator.textContent = message;
+      indicator.className = `status-indicator ${type}`;
+      indicator.style.display = 'block';
+    }
+
+    function hideStatus() {
+      document.getElementById('statusIndicator').style.display = 'none';
+    }
+
+    // Modal functions
+    function openModal() {
       document.getElementById('authModal').style.display = 'block';
+      // Check backend connection when modal opens
+      checkBackendConnection();
+    }
+
+    function closeModal() {
+      document.getElementById('authModal').style.display = 'none';
+    }
+
+    function switchTab(tabName) {
+      // Remove active class from all tabs
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      // Activate selected tab
+      document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+    }
+
+    // Backend connection check
+    async function checkBackendConnection() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        if (response.ok) {
+          showStatus('✅ AI system connected', 'success');
+          setTimeout(hideStatus, 2000);
+        } else {
+          throw new Error('Backend not responding');
+        }
+      } catch (error) {
+        showStatus('⚠️ Backend offline - Demo mode only', 'warning');
+        // Don't hide this warning immediately
+      }
+    }
+
+    // Authentication functions (no sessionStorage)
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!email || !password) {
+        showStatus('Please fill in all fields', 'error');
+        setTimeout(hideStatus, 3000);
+        return;
+      }
+      
+      // For now, simulate login since the backend doesn't have authentication yet
+      // In a real implementation, you would call an auth endpoint
+      showStatus('Logging in...', 'warning');
+      
+      // Simulate API call delay
+      setTimeout(() => {
+        showStatus('✅ Login successful!', 'success');
+        setTimeout(() => {
+          closeModal();
+          // Redirect to course selection with user info in URL
+          const userParams = new URLSearchParams({
+            username: email.split('@')[0],
+            email: email,
+            returning_user: 'true'
+          });
+          window.location.href = `course.html?${userParams.toString()}`;
+        }, 1500);
+      }, 1000);
+    }
+
+    async function handleSignup() {
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const path = document.getElementById('signupPath').value;
+      
+      if (!name || !email || !path) {
+        showStatus('Please fill in all fields', 'error');
+        setTimeout(hideStatus, 3000);
+        return;
+      }
+      
+      if (!isValidEmail(email)) {
+        showStatus('Please enter a valid email address', 'error');
+        setTimeout(hideStatus, 3000);
+        return;
+      }
+      
+      try {
+        showStatus('Creating your account...', 'warning');
+        
+        // Create user account using the existing backend endpoint
+        const response = await makeAPICall('/user/login', 'POST', {
+          username: name,
+          specialization: path
+        });
+        
+        if (response) {
+          showStatus('✅ Account created successfully!', 'success');
+          
+          setTimeout(() => {
+            closeModal();
+            // Redirect to course page with user info in URL
+            const userParams = new URLSearchParams({
+              user_id: response.user_id,
+              username: name,
+              email: email,
+              specialization: path,
+              new_user: 'true'
+            });
+            window.location.href = `course.html?${userParams.toString()}`;
+          }, 1500);
+        }
+      } catch (error) {
+        showStatus('Failed to create account. Please try again.', 'error');
+        setTimeout(hideStatus, 3000);
+      }
+    }
+
+    // Demo functions (no sessionStorage)
+    function startDemo(path) {
+      showStatus('Starting demo session...', 'warning');
+      
+      setTimeout(() => {
+        showStatus('✅ Demo ready!', 'success');
+        setTimeout(() => {
+          closeModal();
+          window.location.href = `course.html?demo=true&path=${path}`;
+        }, 1000);
+      }, 1000);
+    }
+
+    function forgotPassword() {
+      showStatus('Password reset feature coming soon!', 'warning');
+      setTimeout(hideStatus, 3000);
+    }
+
+    // Utility functions
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // Event listeners (no sessionStorage)
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if user is returning from course page
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('welcome') === 'back') {
+        showStatus('Welcome back! Ready to continue learning?', 'success');
+        setTimeout(hideStatus, 4000);
+      }
+      
+      // Show welcome message if user just signed up
+      if (urlParams.get('new_signup') === 'true') {
+        showStatus('Welcome to AI Education System!', 'success');
+        setTimeout(hideStatus, 3000);
+      }
     });
-  
-    function login() {
-      window.location.href = 'profile.html';
-    }
-  
-    function signup() {
-      window.location.href = 'course.html';
-    }
-  
-    // Optional: close modal on outside click
+
+    // Close modal on outside click
     window.onclick = function(e) {
       const modal = document.getElementById('authModal');
       if (e.target === modal) {
-        modal.style.display = "none";
+        closeModal();
       }
     }
+
+    // Enhanced CTA button functionality
+    document.querySelector('.cta-section a').addEventListener('click', function(e) {
+      e.preventDefault();
+      openModal();
+    });
   </script>
-
-
+</body>
 </html>

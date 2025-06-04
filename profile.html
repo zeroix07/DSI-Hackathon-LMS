@@ -45,50 +45,131 @@
     }
     .profile-header {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       margin-bottom: 40px;
+      gap: 20px;
     }
     .profile-info {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
+      flex: 1;
     }
     .profile-info img {
       width: 120px;
       height: 120px;
       border-radius: 50%;
-      margin-right: 20px;
+      margin-right: 25px;
+      flex-shrink: 0;
+    }
+    .profile-details {
+      flex: 1;
+      min-width: 0;
     }
     .profile-details h2 {
-      font-size: 1.8rem;
+      font-size: 2rem;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    .profile-tags {
+      margin: 15px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     .profile-tags span {
       background: #eee;
-      padding: 4px 8px;
-      margin-right: 6px;
-      font-size: 0.8rem;
-      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      border-radius: 15px;
+    }
+    .profile-description {
+      margin-top: 12px;
+      color: #666;
+      line-height: 1.5;
     }
     .profile-actions {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      width: 160px;
+      gap: 12px;
+      width: 180px;
+      flex-shrink: 0;
     }
     .profile-actions button {
-      padding: 10px;
+      padding: 12px 16px;
       font-size: 1rem;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       cursor: pointer;
       width: 100%;
+      font-weight: 500;
+      transition: all 0.3s ease;
     }
     .edit-btn {
       background-color: #ffc107;
+      color: black;
+    }
+    .edit-btn:hover {
+      background-color: #ffca2c;
+      transform: translateY(-1px);
     }
     .view-btn {
       background-color: black;
       color: white;
+    }
+    .view-btn:hover {
+      background-color: #333;
+      transform: translateY(-1px);
+    }
+    .continue-learning-btn {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+    }
+    .continue-learning-btn:hover {
+      background: linear-gradient(135deg, #20c997, #17a2b8);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      
+      .profile-info {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      
+      .profile-info img {
+        margin-right: 0;
+        margin-bottom: 15px;
+      }
+      
+      .profile-actions {
+        width: 100%;
+        max-width: 300px;
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+      }
+      
+      .continue-learning-btn {
+        flex: 1;
+        min-width: 0;
+      }
     }
     .progress-section {
       text-align: center;
@@ -164,15 +245,148 @@
       cursor: pointer;
       border-radius: 5px;
     }
+
+    /* Enhanced styles for backend integration */
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #ffc107;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .achievement-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ffc107, #ff8f00);
+      color: black;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      margin: 2px;
+      font-weight: bold;
+    }
+    
+    .level-indicator {
+      background: #6b8ed6;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    
+    .progress-card {
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .skill-meter {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+    
+    .skill-name {
+      width: 80px;
+      font-weight: bold;
+      text-align: left;
+    }
+    
+    .skill-bar {
+      flex: 1;
+      height: 20px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      margin: 0 10px;
+      overflow: hidden;
+    }
+    
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffc107, #ff8f00);
+      border-radius: 10px;
+      transition: width 0.8s ease;
+    }
+    
+    .skill-score {
+      width: 50px;
+      text-align: right;
+      font-weight: bold;
+    }
+    
+    .recent-activity {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 4px solid #ffc107;
+    }
+    
+    .activity-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ffc107;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      font-weight: bold;
+    }
+    
+    .continue-learning-btn {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 10px;
+    }
+    
+    .continue-learning-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #c62828;
+    }
   </style>
-  <script>
-    function showStats() {
-      document.getElementById('statsPopup').style.display = 'flex';
-    }
-    function closeStats() {
-      document.getElementById('statsPopup').style.display = 'none';
-    }
-  </script>
 </head>
 <body>
   <header>
@@ -182,66 +396,534 @@
     </div>
     <nav>
       <a href="index.html">Home</a>
-      <a href="#">Course</a>
+      <a href="course.html">Course</a>
       <a href="#">About Us</a>
       <a href="#">Contact</a>
     </nav>
   </header>
 
-  <div class="profile-container">
+  <!-- Loading State -->
+  <div id="loading-section" class="profile-container" style="display: none;">
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <h3>Loading Your Profile...</h3>
+      <p>Fetching your latest learning progress and achievements.</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div id="error-section" class="profile-container" style="display: none;">
+    <div class="error-message">
+      <h3>Unable to Load Profile</h3>
+      <p id="error-message">Please check your connection and try again.</p>
+      <button onclick="loadProfile()" style="margin-top: 10px; padding: 10px 20px; background: #ffc107; border: none; border-radius: 5px; cursor: pointer;">
+        Retry
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Profile Content -->
+  <div id="profile-content" class="profile-container">
     <div class="profile-header">
       <div class="profile-info">
-        <img src="image/avatar.svg" alt="User Photo">
+        <img id="profile-avatar" src="image/avatar.svg" alt="User Photo">
         <div class="profile-details">
-          <h2>Agus</h2>
-          <div class="profile-tags">
-            <span>Data Scientist</span>
-            <span>Machine Learning Enthusiast</span>
+          <h2 id="profile-name">Loading...</h2>
+          <span id="profile-level" class="level-indicator">Level: Beginner</span>
+          <div id="profile-tags" class="profile-tags">
+            <!-- Dynamic tags will be inserted here -->
           </div>
-          <p>Passionate about turning data into insights.</p>
+          <p id="profile-description" class="profile-description">Passionate about turning data into insights.</p>
         </div>
       </div>
       <div class="profile-actions">
-        <button class="edit-btn">Edit Profile</button>
-        <button class="view-btn" onclick="location.href='profile.html'">View Profile</button>
+        <button class="edit-btn" onclick="editProfile()">Edit Profile</button>
+        <button class="view-btn" onclick="location.reload()">Refresh</button>
+        <button class="continue-learning-btn" onclick="continueLearning()">Continue Learning</button>
       </div>
     </div>
 
+    <!-- Enhanced Progress Section -->
     <div class="progress-section">
-      <h2>Your Learning Progress</h2>
-      <p>Track your journey in data science.</p>
-      <button onclick="showStats()">View Detailed Stats</button>
+      <h2>Your Learning Journey</h2>
+      <p id="progress-description">Track your progress and achievements in data science.</p>
+      
+      <!-- Progress Cards -->
+      <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin: 30px 0;">
+        <div class="progress-card" style="flex: 1; min-width: 200px;">
+          <h3>Overall Score</h3>
+          <div style="font-size: 2rem; font-weight: bold; color: #ffc107;" id="overall-score">--%</div>
+          <p>Last Assessment</p>
+        </div>
+        <div class="progress-card" style="flex: 1; min-width: 200px;">
+          <h3>Completed Modules</h3>
+          <div style="font-size: 2rem; font-weight: bold; color: #28a745;" id="completed-modules">--</div>
+          <p>Learning Materials</p>
+        </div>
+        <div class="progress-card" style="flex: 1; min-width: 200px;">
+          <h3>Skill Level</h3>
+          <div style="font-size: 1.5rem; font-weight: bold; color: #6b8ed6;" id="skill-level">--</div>
+          <p>Current Proficiency</p>
+        </div>
+      </div>
+
+      <!-- Achievements Section -->
+      <div id="achievements-section" style="margin: 30px 0;">
+        <h3>🏆 Achievements</h3>
+        <div id="achievements-container" style="margin: 15px 0;">
+          <!-- Dynamic achievements will be inserted here -->
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div id="recent-activity-section" class="recent-activity" style="text-align: left;">
+        <h3>📈 Recent Activity</h3>
+        <div id="activity-container">
+          <!-- Dynamic activity will be inserted here -->
+        </div>
+      </div>
+
+      <button onclick="showDetailedStats()" style="padding: 12px 24px; background: #ffc107; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px;">
+        View Detailed Analytics
+      </button>
     </div>
   </div>
 
+  <!-- Enhanced Stats Popup -->
   <div class="stats-popup" id="statsPopup">
     <div class="stats-content">
-      <h2>Your Current Skill Metrics</h2>
-      <p>Here’s how you currently measure against common skills.</p>
-      <div class="bar-chart">
-        <div>
-          <div class="bar" style="height: 150px;"></div>
-          <div class="bar-label">Viz</div>
-        </div>
-        <div>
-          <div class="bar" style="height: 180px;"></div>
-          <div class="bar-label">Stats</div>
-        </div>
-        <div>
-          <div class="bar" style="height: 100px;"></div>
-          <div class="bar-label">SQL</div>
-        </div>
-        <div>
-          <div class="bar" style="height: 120px;"></div>
-          <div class="bar-label">ML</div>
-        </div>
-        <div>
-          <div class="bar" style="height: 140px;"></div>
-          <div class="bar-label">Python</div>
+      <h2>📊 Your Detailed Analytics</h2>
+      <p>Comprehensive breakdown of your learning performance and skill development.</p>
+      
+      <!-- Dynamic Skill Chart -->
+      <div id="skills-chart-container">
+        <h3>Current Skill Levels</h3>
+        <div id="skills-chart" style="margin: 20px 0;">
+          <!-- Dynamic skill meters will be inserted here -->
         </div>
       </div>
-      <button class="close-btn" onclick="closeStats()">Back to Profile</button>
+      
+      <!-- Performance Chart -->
+      <div class="bar-chart" id="performance-chart">
+        <!-- Dynamic bars will be inserted here -->
+      </div>
+      
+      <!-- Recommendations -->
+      <div id="recommendations-section" style="text-align: left; margin: 20px 0; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+        <h4>🎯 AI Recommendations</h4>
+        <div id="recommendations-list">
+          <!-- Dynamic recommendations will be inserted here -->
+        </div>
+      </div>
+      
+      <button class="close-btn" onclick="closeStats()">Close Analytics</button>
     </div>
   </div>
+
+  <script>
+    // Global variables
+    let currentUser = null;
+    let userStats = null;
+    const API_BASE_URL = 'http://localhost:8000/api';
+
+    // API utility function
+    async function makeAPICall(endpoint, method = 'GET', data = null) {
+      try {
+        const config = {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        };
+        
+        if (data) {
+          config.body = JSON.stringify(data);
+        }
+        
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('API call failed:', error);
+        throw error;
+      }
+    }
+
+    // Load user profile data
+    async function loadProfile() {
+      document.getElementById('loading-section').style.display = 'block';
+      document.getElementById('profile-content').style.display = 'none';
+      document.getElementById('error-section').style.display = 'none';
+
+      try {
+        // Get user info from URL parameters only (no sessionStorage)
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id');
+        const username = urlParams.get('username');
+        const specialization = urlParams.get('specialization');
+        const level = urlParams.get('level');
+        
+        // If we have URL parameters, use them
+        if (userId && username) {
+          currentUser = {
+            user_id: userId,
+            username: username,
+            specialization: specialization || 'data_scientist',
+            level: level || 'beginner',
+            score: parseInt(urlParams.get('score')) || 75,
+            email: urlParams.get('email') || `${username.toLowerCase().replace(' ', '.')}@example.com`
+          };
+          
+          displayProfile(currentUser);
+          await loadUserStats();
+          return;
+        }
+
+        // If no URL parameters, try to fetch from backend with demo user
+        try {
+          // Try to fetch from backend first with a demo user ID
+          const demoUserId = 'demo-user-' + Date.now();
+          const response = await makeAPICall(`/user/${demoUserId}`);
+          currentUser = response;
+        } catch (error) {
+          // Fallback to demo data if backend is unavailable
+          console.log('Backend unavailable, using demo data');
+          currentUser = createDemoUserData();
+        }
+
+        displayProfile(currentUser);
+        await loadUserStats();
+
+      } catch (error) {
+        console.error('Profile loading failed:', error);
+        // Create demo user as fallback
+        currentUser = createDemoUserData();
+        displayProfile(currentUser);
+        await loadUserStats();
+      }
+    }
+
+    // Create demo user data (no sessionStorage dependency)
+    function createDemoUserData() {
+      // Generate different demo users based on current time to simulate variety
+      const demoUsers = [
+        {
+          user_id: 'demo-user-1',
+          username: 'Alex Johnson',
+          specialization: 'data_scientist',
+          level: 'intermediate',
+          email: 'alex.johnson@example.com',
+          score: 78,
+          completed_modules: 4,
+          total_modules: 8,
+          achievements: ['First Assessment Complete', 'Quick Learner', 'Statistics Master'],
+          recent_activity: [
+            { type: 'assessment', description: 'Completed advanced statistics assessment', score: 85, date: new Date().toLocaleDateString() },
+            { type: 'learning', description: 'Finished Machine Learning fundamentals', date: new Date().toLocaleDateString() },
+            { type: 'achievement', description: 'Earned "Statistics Master" badge', date: new Date().toLocaleDateString() },
+            { type: 'quiz', description: 'Scored 90% on Python coding quiz', score: 90, date: new Date().toLocaleDateString() }
+          ]
+        },
+        {
+          user_id: 'demo-user-2',
+          username: 'Maria Garcia',
+          specialization: 'data_engineer',
+          level: 'advanced',
+          email: 'maria.garcia@example.com',
+          score: 92,
+          completed_modules: 7,
+          total_modules: 8,
+          achievements: ['Assessment Expert', 'Database Wizard', 'Pipeline Master', 'Code Quality Champion'],
+          recent_activity: [
+            { type: 'project', description: 'Built real-time data pipeline', score: 95, date: new Date().toLocaleDateString() },
+            { type: 'assessment', description: 'Aced database design assessment', score: 98, date: new Date().toLocaleDateString() },
+            { type: 'achievement', description: 'Earned "Pipeline Master" certification', date: new Date().toLocaleDateString() }
+          ]
+        },
+        {
+          user_id: 'demo-user-3',
+          username: 'Sam Chen',
+          specialization: 'data_scientist',
+          level: 'beginner',
+          email: 'sam.chen@example.com',
+          score: 45,
+          completed_modules: 1,
+          total_modules: 8,
+          achievements: ['Getting Started'],
+          recent_activity: [
+            { type: 'assessment', description: 'Completed first skill assessment', score: 45, date: new Date().toLocaleDateString() },
+            { type: 'learning', description: 'Started Python basics module', date: new Date().toLocaleDateString() },
+            { type: 'achievement', description: 'Welcome to the journey!', date: new Date().toLocaleDateString() }
+          ]
+        }
+      ];
+      
+      // Select demo user based on current second to add variety
+      const index = new Date().getSeconds() % demoUsers.length;
+      return demoUsers[index];
+    }
+
+    // Display profile information
+    function displayProfile(user) {
+      document.getElementById('loading-section').style.display = 'none';
+      document.getElementById('profile-content').style.display = 'block';
+
+      // Update basic profile info
+      document.getElementById('profile-name').textContent = user.username;
+      document.getElementById('profile-level').textContent = `Level: ${user.level.charAt(0).toUpperCase() + user.level.slice(1)}`;
+      
+      // Update tags
+      const tagsContainer = document.getElementById('profile-tags');
+      const specializationDisplay = user.specialization === 'data_engineer' ? 'Data Engineer' : 'Data Scientist';
+      tagsContainer.innerHTML = `
+        <span class="achievement-badge">${specializationDisplay}</span>
+        <span class="achievement-badge">${user.level.charAt(0).toUpperCase() + user.level.slice(1)} Level</span>
+      `;
+
+      // Add achievements as badges
+      if (user.achievements && user.achievements.length > 0) {
+        user.achievements.forEach(achievement => {
+          tagsContainer.innerHTML += `<span class="achievement-badge">${achievement}</span>`;
+        });
+      }
+
+      // Update progress cards
+      document.getElementById('overall-score').textContent = `${user.score || 0}%`;
+      document.getElementById('completed-modules').textContent = `${user.completed_modules || 0}/${user.total_modules || 8}`;
+      document.getElementById('skill-level').textContent = user.level.charAt(0).toUpperCase() + user.level.slice(1);
+
+      // Update progress description
+      const progressDesc = user.specialization === 'data_engineer' 
+        ? 'Track your progress in data engineering and infrastructure skills.'
+        : 'Track your progress in data science and machine learning.';
+      document.getElementById('progress-description').textContent = progressDesc;
+
+      // Display recent activity
+      displayRecentActivity(user.recent_activity || []);
+
+      // Display achievements
+      displayAchievements(user.achievements || []);
+    }
+
+    // Display recent activity
+    function displayRecentActivity(activities) {
+      const container = document.getElementById('activity-container');
+      
+      if (activities.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No recent activity. Start learning to see your progress here!</p>';
+        return;
+      }
+
+      container.innerHTML = activities.map(activity => {
+        const icon = getActivityIcon(activity.type);
+        return `
+          <div class="activity-item">
+            <div class="activity-icon">${icon}</div>
+            <div style="flex: 1;">
+              <strong>${activity.description}</strong>
+              ${activity.score ? `<span style="color: #ffc107; font-weight: bold; margin-left: 10px;">Score: ${activity.score}%</span>` : ''}
+              <div style="color: #666; font-size: 0.9rem;">${activity.date}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Get activity icon based on type
+    function getActivityIcon(type) {
+      const icons = {
+        'assessment': '📝',
+        'learning': '📚',
+        'quiz': '🧠',
+        'achievement': '🏆',
+        'project': '💻',
+        'completion': '✅'
+      };
+      return icons[type] || '📊';
+    }
+
+    // Display achievements
+    function displayAchievements(achievements) {
+      const container = document.getElementById('achievements-container');
+      
+      if (achievements.length === 0) {
+        container.innerHTML = '<p style="color: #666;">Complete assessments and learning modules to earn achievements!</p>';
+        return;
+      }
+
+      container.innerHTML = achievements.map(achievement => 
+        `<span class="achievement-badge">🏆 ${achievement}</span>`
+      ).join(' ');
+    }
+
+    // Load detailed user statistics
+    async function loadUserStats() {
+      try {
+        // Generate mock stats based on user data
+        userStats = generateMockStats(currentUser);
+      } catch (error) {
+        console.error('Failed to load user stats:', error);
+        userStats = generateMockStats(currentUser);
+      }
+    }
+
+    // Generate mock statistics
+    function generateMockStats(user) {
+      const baseScore = user.score || 50;
+      const level = user.level || 'beginner';
+      
+      // Adjust scores based on level
+      const levelMultiplier = {
+        'beginner': 0.6,
+        'intermediate': 0.8,
+        'advanced': 0.95
+      };
+      
+      const multiplier = levelMultiplier[level] || 0.6;
+      
+      return {
+        skills: {
+          'Python': Math.round(baseScore * multiplier),
+          'SQL': Math.round((baseScore - 10) * multiplier),
+          'Statistics': Math.round((baseScore + 5) * multiplier),
+          'ML': Math.round((baseScore - 15) * multiplier),
+          'Visualization': Math.round((baseScore + 10) * multiplier)
+        },
+        recommendations: [
+          `Focus on improving ${level === 'beginner' ? 'Python fundamentals' : level === 'intermediate' ? 'advanced SQL queries' : 'machine learning optimization'}`,
+          `Practice more ${user.specialization === 'data_engineer' ? 'database design' : 'statistical analysis'}`,
+          'Complete coding challenges to improve problem-solving skills',
+          'Join study groups to enhance collaborative learning'
+        ].slice(0, 3),
+        performance_trend: 'improving',
+        study_time: Math.round(baseScore / 10) + 5,
+        next_milestone: level === 'beginner' ? 'Intermediate Level' : level === 'intermediate' ? 'Advanced Level' : 'Expert Certification'
+      };
+    }
+
+    // Show detailed statistics popup
+    function showDetailedStats() {
+      if (!userStats) {
+        userStats = generateMockStats(currentUser);
+      }
+
+      // Display skills chart
+      displaySkillsChart(userStats.skills);
+      
+      // Display performance chart
+      displayPerformanceChart(userStats.skills);
+      
+      // Display recommendations
+      displayRecommendations(userStats.recommendations);
+      
+      document.getElementById('statsPopup').style.display = 'flex';
+    }
+
+    // Display skills as progress bars
+    function displaySkillsChart(skills) {
+      const container = document.getElementById('skills-chart');
+      container.innerHTML = Object.entries(skills).map(([skill, score]) => `
+        <div class="skill-meter">
+          <div class="skill-name">${skill}</div>
+          <div class="skill-bar">
+            <div class="skill-fill" style="width: ${score}%"></div>
+          </div>
+          <div class="skill-score">${score}%</div>
+        </div>
+      `).join('');
+    }
+
+    // Display performance bar chart
+    function displayPerformanceChart(skills) {
+      const container = document.getElementById('performance-chart');
+      container.innerHTML = Object.entries(skills).map(([skill, score]) => `
+        <div>
+          <div class="bar" style="height: ${(score / 100) * 180}px;"></div>
+          <div class="bar-label">${skill}</div>
+        </div>
+      `).join('');
+    }
+
+    // Display AI recommendations
+    function displayRecommendations(recommendations) {
+      const container = document.getElementById('recommendations-list');
+      container.innerHTML = recommendations.map((rec, index) => `
+        <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 5px; border-left: 3px solid #ffc107;">
+          <strong>${index + 1}.</strong> ${rec}
+        </div>
+      `).join('');
+    }
+
+    // Close statistics popup
+    function closeStats() {
+      document.getElementById('statsPopup').style.display = 'none';
+    }
+
+    // Continue learning - redirect to course or Streamlit (no sessionStorage)
+    function continueLearning() {
+      if (currentUser) {
+        // Create URL parameters instead of using sessionStorage
+        const params = new URLSearchParams({
+          user_id: currentUser.user_id,
+          username: currentUser.username,
+          specialization: currentUser.specialization,
+          level: currentUser.level || 'beginner',
+          score: currentUser.score || 0,
+          returning: 'true'
+        });
+        
+        // Option 1: Redirect to learning with parameters
+        window.location.href = `learning.html?${params.toString()}`;
+        
+        // Option 2: Redirect to course page with parameters (uncomment if preferred)
+        // window.location.href = `course.html?${params.toString()}`;
+      } else {
+        // Redirect to course page for new assessment
+        window.location.href = 'course.html';
+      }
+    }
+
+    // Edit profile functionality (no sessionStorage)
+    function editProfile() {
+      const newName = prompt('Enter new name:', currentUser ? currentUser.username : 'User');
+      if (newName && newName.trim()) {
+        if (currentUser) {
+          currentUser.username = newName.trim();
+          document.getElementById('profile-name').textContent = newName.trim();
+          
+          // Update URL to reflect the change
+          const urlParams = new URLSearchParams(window.location.search);
+          urlParams.set('username', newName.trim());
+          const newUrl = window.location.pathname + '?' + urlParams.toString();
+          window.history.replaceState({}, '', newUrl);
+        }
+      }
+    }
+
+    // Show error message
+    function showError(message) {
+      document.getElementById('loading-section').style.display = 'none';
+      document.getElementById('profile-content').style.display = 'none';
+      document.getElementById('error-section').style.display = 'block';
+      document.getElementById('error-message').textContent = message;
+    }
+
+    // Initialize profile on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      loadProfile();
+    });
+
+    // Close modal on outside click
+    window.onclick = function(e) {
+      const modal = document.getElementById('statsPopup');
+      if (e.target === modal) {
+        closeStats();
+      }
+    }
+  </script>
 </body>
 </html>

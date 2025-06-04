@@ -1,0 +1,16 @@
+streamlit
+fastapi
+uvicorn
+groq
+tavily-python
+pydantic
+python-multipart
+gtts
+pygame
+requests
+python-jose
+passlib
+sqlalchemy
+plotly
+pyttsx3
+python-dotenv

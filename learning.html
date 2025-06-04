@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Learning Dashboard - AI Education System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    
+    body {
+      background: #f8f9fa;
+      color: #333;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: white;
+      border-bottom: 1px solid #ccc;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-section img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: black;
+      font-weight: 500;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .user-badge {
+      background: #ffc107;
+      color: black;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+    
+    .main-container {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      gap: 30px;
+    }
+    
+    .content-area {
+      flex: 2;
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .chat-area {
+      flex: 1;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #ffc107;
+      padding-bottom: 10px;
+    }
+    
+    .section-header h2 {
+      color: #333;
+      font-size: 1.8rem;
+    }
+    
+    .progress-indicator {
+      background: #e9ecef;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-left: 4px solid #ffc107;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e9ecef;
+      border-radius: 4px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffc107, #ff8f00);
+      border-radius: 4px;
+      transition: width 0.8s ease;
+    }
+    
+    .learning-objectives {
+      background: #e8f5e8;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 4px solid #28a745;
+    }
+    
+    .learning-objectives h3 {
+      color: #28a745;
+      margin-bottom: 15px;
+    }
+    
+    .objective-item {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+      padding: 5px 0;
+    }
+    
+    .objective-item::before {
+      content: "🎯";
+      margin-right: 10px;
+    }
+    
+    .content-section {
+      margin: 30px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+    }
+    
+    .content-header {
+      background: #f8f9fa;
+      padding: 15px 20px;
+      border-bottom: 1px solid #e9ecef;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+    
+    .content-header:hover {
+      background: #e9ecef;
+    }
+    
+    .content-header.active {
+      background: #ffc107;
+      color: black;
+    }
+    
+    .content-body {
+      padding: 20px;
+      display: none;
+      background: white;
+    }
+    
+    .content-body.active {
+      display: block;
+    }
+    
+    .expand-icon {
+      transition: transform 0.3s ease;
+    }
+    
+    .content-header.active .expand-icon {
+      transform: rotate(180deg);
+    }
+    
+    .code-example {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+    }
+    
+    .example-card {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    
+    .example-card h4 {
+      color: #856404;
+      margin-bottom: 10px;
+    }
+    
+    .best-practice {
+      background: #d1ecf1;
+      border: 1px solid #bee5eb;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #17a2b8;
+    }
+    
+    .chat-container {
+      height: 400px;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      overflow-y: auto;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: #f8f9fa;
+    }
+    
+    .chat-message {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 15px;
+      max-width: 80%;
+    }
+    
+    .user-message {
+      background: #ffc107;
+      color: black;
+      margin-left: auto;
+      text-align: right;
+    }
+    
+    .ai-message {
+      background: #e9ecef;
+      color: #333;
+    }
+    
+    .chat-input-container {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .chat-input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #e9ecef;
+      border-radius: 20px;
+      outline: none;
+    }
+    
+    .chat-input:focus {
+      border-color: #ffc107;
+    }
+    
+    .send-btn {
+      background: #ffc107;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .send-btn:hover {
+      background: #ff8f00;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin: 30px 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background: #ffc107;
+      color: black;
+      border: 1px solid #000;
+    }
+    
+    .btn-primary:hover {
+      background: #ff8f00;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #545b62;
+      transform: translateY(-2px);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #ffc107;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .typing-indicator {
+      display: none;
+      padding: 10px 15px;
+      background: #e9ecef;
+      border-radius: 15px;
+      max-width: 80px;
+      margin: 10px 0;
+    }
+    
+    .typing-indicator::after {
+      content: "●●●";
+      animation: typing 1.5s infinite;
+    }
+    
+    @keyframes typing {
+      0%, 60% { content: "●●●"; }
+      40% { content: "●●"; }
+      80% { content: "●"; }
+    }
+    
+    .quiz-section {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 30px 0;
+      text-align: center;
+    }
+    
+    .quiz-section h3 {
+      color: #856404;
+      margin-bottom: 15px;
+    }
+    
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .chat-area {
+        position: static;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-section">
+      <img src="logo.png" alt="Logo">
+      <strong>AI Education System</strong>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="course.html">Courses</a>
+      <a href="profile.html">Profile</a>
+      <a href="#">About</a>
+    </nav>
+    <div class="user-info">
+      <span id="user-name">Welcome!</span>
+      <span id="user-badge" class="user-badge">Learner</span>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div id="loading-section" style="display: none;">
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <h3>Generating Your Personalized Learning Material...</h3>
+      <p>Our AI is creating content tailored to your level and specialization.</p>
+    </div>
+  </div>
+
+  <!-- Main Learning Dashboard -->
+  <div id="learning-dashboard" class="main-container">
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Progress Section -->
+      <div class="progress-indicator">
+        <h3 id="progress-title">Your Learning Progress</h3>
+        <div class="progress-bar">
+          <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+        </div>
+        <p id="progress-text">Starting your personalized learning journey...</p>
+      </div>
+
+      <!-- Learning Material Header -->
+      <div class="section-header">
+        <h2 id="material-title">Loading Your Personalized Content...</h2>
+      </div>
+
+      <!-- Learning Objectives -->
+      <div id="objectives-section" class="learning-objectives">
+        <h3>🎯 Learning Objectives</h3>
+        <div id="objectives-list">
+          <!-- Dynamic objectives will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Prerequisites -->
+      <div id="prerequisites-section" style="display: none;">
+        <div class="content-section">
+          <div class="content-header">
+            <h3>📋 Prerequisites</h3>
+          </div>
+          <div class="content-body">
+            <div id="prerequisites-list">
+              <!-- Dynamic prerequisites will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theory Overview -->
+      <div class="content-section">
+        <div class="content-header active" onclick="toggleSection(this)">
+          <h3>📚 Theory Overview</h3>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="content-body active">
+          <div id="theory-content">
+            <!-- Dynamic theory content will be loaded here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Practical Examples -->
+      <div class="content-section">
+        <div class="content-header" onclick="toggleSection(this)">
+          <h3>💡 Practical Examples</h3>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="content-body">
+          <div id="examples-content">
+            <!-- Dynamic examples will be loaded here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Best Practices -->
+      <div class="content-section">
+        <div class="content-header" onclick="toggleSection(this)">
+          <h3>✅ Best Practices</h3>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="content-body">
+          <div id="practices-content">
+            <!-- Dynamic best practices will be loaded here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz Section -->
+      <div class="quiz-section">
+        <h3>🧠 Ready to Test Your Knowledge?</h3>
+        <p>Complete the material above, then take the quiz to demonstrate your understanding.</p>
+        <button id="take-quiz-btn" class="btn btn-primary" onclick="takeQuiz()" disabled>
+          Take Knowledge Quiz
+        </button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-secondary" onclick="goBack()">← Back to Courses</button>
+        <button class="btn btn-primary" onclick="viewProgress()">📊 View Progress</button>
+        <button class="btn btn-secondary" onclick="nextModule()" style="display: none;" id="next-module-btn">
+          Next Module →
+        </button>
+      </div>
+    </div>
+
+    <!-- AI Tutor Chat Area -->
+    <div class="chat-area">
+      <h3>🤖 AI Tutor</h3>
+      <p style="margin-bottom: 15px; color: #666; font-size: 0.9rem;">
+        Ask questions about the material or request clarification on any topic.
+      </p>
+      
+      <div id="chat-container" class="chat-container">
+        <div class="ai-message">
+          <strong>AI Tutor:</strong> Hello! I'm here to help you understand the material. Feel free to ask me any questions about what you're learning!
+        </div>
+      </div>
+      
+      <div class="typing-indicator" id="typing-indicator">
+        AI is typing...
+      </div>
+      
+      <div class="chat-input-container">
+        <input 
+          type="text" 
+          id="chat-input" 
+          class="chat-input" 
+          placeholder="Ask about the material..."
+          onkeypress="handleChatKeyPress(event)"
+        />
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+      
+      <div style="margin-top: 15px; font-size: 0.8rem; color: #666;">
+        💡 <strong>Try asking:</strong><br>
+        • "Explain this concept in simpler terms"<br>
+        • "Give me more examples"<br>
+        • "How is this used in real projects?"
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let currentUser = null;
+    let learningMaterial = null;
+    let chatHistory = [];
+    let materialProgress = 0;
+    const API_BASE_URL = 'http://localhost:8000/api';
+
+    // Initialize learning dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUserInfo();
+      loadLearningMaterial();
+    });
+
+    // Load user information from URL parameters
+    function loadUserInfo() {
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      currentUser = {
+        user_id: urlParams.get('user_id') || 'demo-user',
+        username: urlParams.get('username') || 'Learner',
+        specialization: urlParams.get('specialization') || 'data_scientist',
+        level: urlParams.get('level') || 'beginner',
+        score: parseInt(urlParams.get('score')) || 0
+      };
+
+      // Update UI with user info
+      document.getElementById('user-name').textContent = `Welcome, ${currentUser.username}!`;
+      
+      const specializationDisplay = currentUser.specialization === 'data_engineer' ? 'Data Engineer' : 'Data Scientist';
+      document.getElementById('user-badge').textContent = `${specializationDisplay} - ${currentUser.level.charAt(0).toUpperCase() + currentUser.level.slice(1)}`;
+    }
+
+    // Load learning material
+    async function loadLearningMaterial() {
+      document.getElementById('loading-section').style.display = 'block';
+      document.getElementById('learning-dashboard').style.display = 'none';
+
+      try {
+        // Try to fetch from backend
+        const response = await makeAPICall(`/learning/start/${currentUser.user_id}`);
+        if (response && response.material) {
+          learningMaterial = response.material;
+        } else {
+          throw new Error('No material from backend');
+        }
+      } catch (error) {
+        console.log('Backend unavailable, generating demo material');
+        learningMaterial = generateDemoMaterial();
+      }
+
+      displayLearningMaterial();
+      document.getElementById('loading-section').style.display = 'none';
+      document.getElementById('learning-dashboard').style.display = 'flex';
+    }
+
+    // Generate demo learning material
+    function generateDemoMaterial() {
+      const isDataEngineer = currentUser.specialization === 'data_engineer';
+      
+      if (isDataEngineer) {
+        return {
+          id: 'demo-material-de',
+          title: 'Data Pipeline Fundamentals',
+          subtitle: 'Building robust and scalable data processing systems',
+          learning_objectives: [
+            'Understand the components of a data pipeline',
+            'Learn about ETL vs ELT processes',
+            'Master data validation and quality checks',
+            'Implement error handling and monitoring',
+            'Design for scalability and performance'
+          ],
+          prerequisites: [
+            'Basic understanding of databases',
+            'Familiarity with SQL',
+            'Python programming basics',
+            'Understanding of data formats (JSON, CSV, Parquet)'
+          ],
+          content: {
+            theory: {
+              overview: `Data pipelines are the backbone of modern data infrastructure. They automate the flow of data from various sources to destinations, ensuring data is clean, transformed, and available for analysis. A well-designed pipeline handles data ingestion, processing, validation, and delivery with reliability and efficiency.
+              
+              The key principles of effective data pipelines include: automation, monitoring, scalability, fault tolerance, and data quality assurance. Understanding these principles is crucial for building systems that can handle real-world data challenges.`,
+              key_concepts: [
+                'Data Ingestion: Collecting data from various sources (APIs, databases, files)',
+                'Data Transformation: Cleaning, formatting, and enriching data',
+                'Data Validation: Ensuring data quality and integrity',
+                'Data Loading: Storing processed data in target systems',
+                'Monitoring: Tracking pipeline performance and detecting issues',
+                'Orchestration: Managing dependencies and scheduling'
+              ]
+            },
+            practical_examples: [
+              {
+                title: 'Building a Simple ETL Pipeline',
+                description: 'Create a pipeline that extracts user data from a database, transforms it by adding calculated fields, and loads it into a data warehouse.',
+                code_snippet: `import pandas as pd
+from sqlalchemy import create_engine
+
+def extract_user_data(connection):
+    query = "SELECT user_id, signup_date, last_login FROM users"
+    return pd.read_sql(query, connection)
+
+def transform_user_data(df):
+    df['days_since_signup'] = (pd.Timestamp.now() - df['signup_date']).dt.days
+    df['is_active'] = df['last_login'] > (pd.Timestamp.now() - pd.Timedelta(days=30))
+    return df
+
+def load_to_warehouse(df, warehouse_connection):
+    df.to_sql('user_metrics', warehouse_connection, if_exists='replace', index=False)
+
+# Execute pipeline
+source_engine = create_engine('postgresql://source_db')
+warehouse_engine = create_engine('postgresql://warehouse_db')
+
+user_data = extract_user_data(source_engine)
+transformed_data = transform_user_data(user_data)
+load_to_warehouse(transformed_data, warehouse_engine)`,
+                explanation: 'This example demonstrates a basic ETL process using Python and pandas. The pipeline extracts user data, adds calculated metrics, and loads the results to a data warehouse. In production, you would add error handling, logging, and scheduling.'
+              },
+              {
+                title: 'Data Validation Implementation',
+                description: 'Implement data quality checks to ensure pipeline reliability.',
+                code_snippet: `def validate_data(df):
+    validation_results = {
+        'total_records': len(df),
+        'null_user_ids': df['user_id'].isnull().sum(),
+        'duplicate_users': df['user_id'].duplicated().sum(),
+        'future_signup_dates': (df['signup_date'] > pd.Timestamp.now()).sum()
+    }
+    
+    # Define validation rules
+    if validation_results['null_user_ids'] > 0:
+        raise ValueError(f"Found {validation_results['null_user_ids']} null user IDs")
+    
+    if validation_results['duplicate_users'] > 0:
+        raise ValueError(f"Found {validation_results['duplicate_users']} duplicate users")
+    
+    return validation_results`,
+                explanation: 'Data validation is crucial for maintaining data quality. This function checks for common data issues like null values, duplicates, and logical inconsistencies. Implementing such checks prevents bad data from corrupting downstream systems.'
+              }
+            ],
+            best_practices: [
+              'Always implement comprehensive error handling and retry logic',
+              'Use incremental processing when possible to improve efficiency',
+              'Implement data lineage tracking to understand data flow',
+              'Set up monitoring and alerting for pipeline failures',
+              'Design idempotent operations to handle re-runs safely',
+              'Use appropriate data formats (Parquet for analytics, Avro for streaming)',
+              'Implement proper logging for debugging and auditing',
+              'Test pipelines with realistic data volumes and edge cases'
+            ]
+          }
+        };
+      } else {
+        return {
+          id: 'demo-material-ds',
+          title: 'Exploratory Data Analysis (EDA)',
+          subtitle: 'Discovering insights and patterns in your data',
+          learning_objectives: [
+            'Master the fundamentals of exploratory data analysis',
+            'Learn to identify data quality issues',
+            'Understand statistical measures and distributions',
+            'Create effective data visualizations',
+            'Develop insights to guide modeling decisions'
+          ],
+          prerequisites: [
+            'Basic statistics knowledge',
+            'Python programming fundamentals',
+            'Familiarity with pandas and numpy',
+            'Understanding of data types and structures'
+          ],
+          content: {
+            theory: {
+              overview: `Exploratory Data Analysis (EDA) is a critical first step in any data science project. It involves examining and visualizing data to understand its structure, identify patterns, detect anomalies, and formulate hypotheses. EDA helps data scientists make informed decisions about data preprocessing, feature engineering, and modeling approaches.
+              
+              The goal of EDA is to maximize insight into the data while minimizing assumptions. Through systematic exploration, we can uncover hidden patterns, spot outliers, understand variable relationships, and assess data quality before proceeding with advanced analytics.`,
+              key_concepts: [
+                'Descriptive Statistics: Mean, median, mode, standard deviation, quartiles',
+                'Data Distribution: Understanding normal, skewed, and multimodal distributions',
+                'Correlation Analysis: Identifying relationships between variables',
+                'Outlier Detection: Finding unusual or extreme data points',
+                'Missing Data Analysis: Understanding patterns in missing values',
+                'Feature Relationships: Exploring interactions between variables'
+              ]
+            },
+            practical_examples: [
+              {
+                title: 'Basic Data Profiling',
+                description: 'Generate a comprehensive overview of your dataset to understand its structure and quality.',
+                code_snippet: `import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def data_profile(df):
+    print("Dataset Shape:", df.shape)
+    print("\\nData Types:")
+    print(df.dtypes)
+    
+    print("\\nMissing Values:")
+    missing_data = df.isnull().sum()
+    print(missing_data[missing_data > 0])
+    
+    print("\\nBasic Statistics:")
+    print(df.describe())
+    
+    # Visualize missing data pattern
+    plt.figure(figsize=(12, 6))
+    sns.heatmap(df.isnull(), yticklabels=False, cbar=True, cmap='viridis')
+    plt.title('Missing Data Pattern')
+    plt.show()
+
+# Example usage
+df = pd.read_csv('your_dataset.csv')
+data_profile(df)`,
+                explanation: 'Data profiling gives you a quick overview of your dataset. This function checks data types, missing values, and basic statistics. The heatmap visualization helps identify patterns in missing data, which can inform your data cleaning strategy.'
+              },
+              {
+                title: 'Correlation Analysis and Visualization',
+                description: 'Explore relationships between numerical variables to identify potential predictors.',
+                code_snippet: `def correlation_analysis(df, target_column=None):
+    # Calculate correlation matrix
+    correlation_matrix = df.corr()
+    
+    # Create correlation heatmap
+    plt.figure(figsize=(12, 10))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0,
+                square=True, linewidths=0.5)
+    plt.title('Feature Correlation Matrix')
+    plt.show()
+    
+    # If target column specified, show correlations with target
+    if target_column and target_column in df.columns:
+        target_corr = correlation_matrix[target_column].sort_values(ascending=False)
+        print(f"\\nCorrelations with {target_column}:")
+        print(target_corr)
+        
+        # Visualize target correlations
+        plt.figure(figsize=(10, 6))
+        target_corr.drop(target_column).plot(kind='barh')
+        plt.title(f'Feature Correlations with {target_column}')
+        plt.show()
+
+correlation_analysis(df, target_column='target_variable')`,
+                explanation: 'Correlation analysis helps identify relationships between variables. Strong correlations can indicate multicollinearity issues or reveal important predictive features. The heatmap provides a visual representation of all pairwise correlations.'
+              }
+            ],
+            best_practices: [
+              'Always start with understanding your data before any analysis',
+              'Use multiple visualization types to explore different aspects',
+              'Pay attention to data quality issues early in the process',
+              'Document your findings and insights throughout the EDA process',
+              'Consider the business context when interpreting patterns',
+              'Use statistical tests to validate observed patterns',
+              'Create reproducible EDA scripts for consistent analysis',
+              'Balance between thorough exploration and analysis paralysis'
+            ]
+          }
+        };
+      }
+    }
+
+    // Display learning material
+    function displayLearningMaterial() {
+      // Update title and subtitle
+      document.getElementById('material-title').textContent = learningMaterial.title;
+      
+      // Update progress
+      const progress = calculateProgress();
+      document.getElementById('progress-fill').style.width = `${progress}%`;
+      document.getElementById('progress-text').textContent = `Progress: ${progress}% complete`;
+      
+      // Display learning objectives
+      const objectivesList = document.getElementById('objectives-list');
+      objectivesList.innerHTML = learningMaterial.learning_objectives.map(obj => 
+        `<div class="objective-item">${obj}</div>`
+      ).join('');
+      
+      // Display prerequisites if available
+      if (learningMaterial.prerequisites && learningMaterial.prerequisites.length > 0) {
+        document.getElementById('prerequisites-section').style.display = 'block';
+        const prerequisitesList = document.getElementById('prerequisites-list');
+        prerequisitesList.innerHTML = learningMaterial.prerequisites.map(prereq => 
+          `<div class="best-practice">📋 ${prereq}</div>`
+        ).join('');
+      }
+      
+      // Display theory content
+      displayTheoryContent();
+      
+      // Display practical examples
+      displayPracticalExamples();
+      
+      // Display best practices
+      displayBestPractices();
+      
+      // Enable quiz button after material is loaded
+      document.getElementById('take-quiz-btn').disabled = false;
+    }
+
+    // Display theory content
+    function displayTheoryContent() {
+      const theoryContent = document.getElementById('theory-content');
+      const theory = learningMaterial.content.theory;
+      
+      let content = `<p style="line-height: 1.6; margin-bottom: 20px;">${theory.overview}</p>`;
+      
+      if (theory.key_concepts) {
+        content += `<h4 style="margin: 20px 0 15px 0; color: #333;">🔑 Key Concepts:</h4>`;
+        content += theory.key_concepts.map(concept => 
+          `<div class="best-practice">💡 ${concept}</div>`
+        ).join('');
+      }
+      
+      theoryContent.innerHTML = content;
+    }
+
+    // Display practical examples
+    function displayPracticalExamples() {
+      const examplesContent = document.getElementById('examples-content');
+      const examples = learningMaterial.content.practical_examples;
+      
+      if (!examples || examples.length === 0) {
+        examplesContent.innerHTML = '<p>No practical examples available for this material.</p>';
+        return;
+      }
+      
+      let content = '';
+      examples.forEach((example, index) => {
+        content += `
+          <div class="example-card">
+            <h4>💻 ${example.title}</h4>
+            <p style="margin-bottom: 15px;">${example.description}</p>
+            
+            ${example.code_snippet ? `
+              <div class="code-example">
+                <h5 style="margin-bottom: 10px;">Code Example:</h5>
+                <pre style="white-space: pre-wrap; margin: 0;">${example.code_snippet}</pre>
+              </div>
+            ` : ''}
+            
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px; border-left: 3px solid #ffc107;">
+              <h5 style="margin-bottom: 8px;">📝 Explanation:</h5>
+              <p style="margin: 0; line-height: 1.5;">${example.explanation}</p>
+            </div>
+          </div>
+        `;
+      });
+      
+      examplesContent.innerHTML = content;
+    }
+
+    // Display best practices
+    function displayBestPractices() {
+      const practicesContent = document.getElementById('practices-content');
+      const practices = learningMaterial.content.best_practices;
+      
+      if (!practices || practices.length === 0) {
+        practicesContent.innerHTML = '<p>No best practices available for this material.</p>';
+        return;
+      }
+      
+      const content = practices.map(practice => 
+        `<div class="best-practice">✅ ${practice}</div>`
+      ).join('');
+      
+      practicesContent.innerHTML = content;
+    }
+
+    // Calculate learning progress
+    function calculateProgress() {
+      // Simple progress calculation based on sections viewed
+      const sections = document.querySelectorAll('.content-section .content-header');
+      const activeSections = document.querySelectorAll('.content-section .content-header.active');
+      return Math.round((activeSections.length / sections.length) * 100);
+    }
+
+    // Toggle content sections
+    function toggleSection(header) {
+      const isActive = header.classList.contains('active');
+      const contentBody = header.nextElementSibling;
+      
+      if (isActive) {
+        header.classList.remove('active');
+        contentBody.classList.remove('active');
+      } else {
+        header.classList.add('active');
+        contentBody.classList.add('active');
+      }
+      
+      // Update progress
+      setTimeout(() => {
+        const progress = calculateProgress();
+        document.getElementById('progress-fill').style.width = `${progress}%`;
+        document.getElementById('progress-text').textContent = `Progress: ${progress}% complete`;
+      }, 100);
+    }
+
+    // API utility function
+    async function makeAPICall(endpoint, method = 'GET', data = null) {
+      try {
+        const config = {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        };
+        
+        if (data) {
+          config.body = JSON.stringify(data);
+        }
+        
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('API call failed:', error);
+        throw error;
+      }
+    }
+
+    // Chat functionality
+    function handleChatKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+      
+      if (!message) return;
+      
+      // Clear input
+      input.value = '';
+      
+      // Add user message to chat
+      addMessageToChat(message, 'user');
+      
+      // Show typing indicator
+      showTypingIndicator();
+      
+      try {
+        // Try to send to backend AI tutor
+        const response = await makeAPICall('/chat', 'POST', {
+          user_id: currentUser.user_id,
+          material_id: learningMaterial.id,
+          message: message
+        });
+        
+        hideTypingIndicator();
+        
+        if (response && response.response) {
+          addMessageToChat(response.response, 'ai');
+        } else {
+          throw new Error('No response from AI');
+        }
+      } catch (error) {
+        console.log('Backend unavailable, using demo responses');
+        hideTypingIndicator();
+        
+        // Generate demo AI response
+        const aiResponse = generateDemoAIResponse(message);
+        addMessageToChat(aiResponse, 'ai');
+      }
+    }
+
+    function addMessageToChat(message, sender) {
+      const chatContainer = document.getElementById('chat-container');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `chat-message ${sender}-message`;
+      
+      if (sender === 'user') {
+        messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+      } else {
+        messageDiv.innerHTML = `<strong>AI Tutor:</strong> ${message}`;
+      }
+      
+      chatContainer.appendChild(messageDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      
+      // Store in chat history
+      chatHistory.push({ message, sender });
+    }
+
+    function showTypingIndicator() {
+      document.getElementById('typing-indicator').style.display = 'block';
+      const chatContainer = document.getElementById('chat-container');
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+      document.getElementById('typing-indicator').style.display = 'none';
+    }
+
+    // Generate demo AI responses
+    function generateDemoAIResponse(userMessage) {
+      const message = userMessage.toLowerCase();
+      
+      // Context-aware responses based on specialization
+      const isDataEngineer = currentUser.specialization === 'data_engineer';
+      
+      if (message.includes('explain') || message.includes('what is')) {
+        if (isDataEngineer) {
+          return "Great question! In data engineering, it's important to understand the underlying architecture. Let me break this down step by step with a practical example that you might encounter in a real pipeline...";
+        } else {
+          return "Excellent question! In data science, this concept is fundamental to understanding patterns in data. Let me explain this with a statistical perspective and show you how it applies to real-world analysis...";
+        }
+      }
+      
+      if (message.includes('example') || message.includes('show me')) {
+        if (isDataEngineer) {
+          return "Here's a practical example you might see in production: Imagine you're building a real-time data pipeline for an e-commerce platform. You'd need to handle order data, user events, and inventory updates. The key is designing for scale and reliability...";
+        } else {
+          return "Let me give you a concrete example: Suppose you're analyzing customer behavior data. You'd start by examining the distribution of key metrics, looking for patterns, and identifying potential outliers. Here's how you'd approach it...";
+        }
+      }
+      
+      if (message.includes('how') || message.includes('implement')) {
+        return "That's a great implementation question! The approach depends on your specific use case, but here are the key steps and best practices you should follow...";
+      }
+      
+      if (message.includes('best practice') || message.includes('recommend')) {
+        return "For best practices, I always recommend starting with the fundamentals. Based on your current level, here are the most important things to focus on right now...";
+      }
+      
+      if (message.includes('difficult') || message.includes('hard') || message.includes('confused')) {
+        return "I understand this can be challenging! Let me break it down into smaller, more manageable pieces. Remember, everyone learns at their own pace, and it's okay to take time to fully grasp these concepts...";
+      }
+      
+      if (message.includes('project') || message.includes('real world')) {
+        if (isDataEngineer) {
+          return "For real-world projects, you'll often deal with messy data, changing requirements, and scale challenges. Here's what I'd recommend starting with to build practical experience...";
+        } else {
+          return "Real-world data science projects are exciting! They often involve business stakeholders, messy data, and iterative analysis. Here's how to approach your first project...";
+        }
+      }
+      
+      // Default responses
+      const defaultResponses = [
+        "That's an insightful question! Based on what we're covering in this material, here's what I think would be most helpful for your learning...",
+        "I'm here to help you understand this better! Could you tell me which specific part you'd like me to elaborate on?",
+        "Great point! This relates directly to what we're learning. Let me connect this to the concepts in your current material...",
+        "I can see you're thinking critically about this topic. That's exactly the right approach for mastering these concepts!"
+      ];
+      
+      return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+    }
+
+    // Navigation functions
+    function takeQuiz() {
+      // Create URL parameters for quiz page
+      const params = new URLSearchParams({
+        user_id: currentUser.user_id,
+        username: currentUser.username,
+        specialization: currentUser.specialization,
+        level: currentUser.level,
+        material_id: learningMaterial.id,
+        from_learning: 'true'
+      });
+      
+      window.location.href = `quiz.html?${params.toString()}`;
+    }
+
+    function goBack() {
+      const params = new URLSearchParams({
+        user_id: currentUser.user_id,
+        username: currentUser.username,
+        specialization: currentUser.specialization,
+        level: currentUser.level,
+        returning: 'true'
+      });
+      
+      window.location.href = `course.html?${params.toString()}`;
+    }
+
+    function viewProgress() {
+      const params = new URLSearchParams({
+        user_id: currentUser.user_id,
+        username: currentUser.username,
+        specialization: currentUser.specialization,
+        level: currentUser.level,
+        score: currentUser.score
+      });
+      
+      window.location.href = `profile.html?${params.toString()}`;
+    }
+
+    function nextModule() {
+      // This would be implemented to load the next learning module
+      alert('Next module functionality would be implemented here! For now, you can take the quiz to complete this module.');
+    }
+
+    // Auto-save progress periodically
+    setInterval(() => {
+      if (currentUser && learningMaterial) {
+        const progress = calculateProgress();
+        console.log(`Auto-saving progress: ${progress}%`);
+        // In a real application, you would save this to the backend
+      }
+    }, 30000); // Save every 30 seconds
+  </script>
+</body>
+</html>

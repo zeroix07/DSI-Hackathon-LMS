@@ -75,6 +75,135 @@
       font-size: 0.9rem;
       background: #f1f1f1;
     }
+
+    /* Additional styles for assessment sections */
+    .assessment-container {
+      display: none;
+      flex-direction: column;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+    
+    .question-card {
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .question-card h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+    
+    .option {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      background: white;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .option:hover {
+      border-color: #ffc107;
+      background: #fff9e6;
+    }
+    
+    .option.selected {
+      border-color: #ffc107;
+      background: #ffc107;
+      color: white;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #ddd;
+      border-radius: 5px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: #ffc107;
+      transition: width 0.3s ease;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #ffc107;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #c62828;
+    }
+    
+    .success-message {
+      background: #e8f5e8;
+      color: #2e7d32;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #2e7d32;
+    }
+
+    .results-container {
+      display: none;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+    
+    .results-card {
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    
+    .score-display {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #ffc107;
+      margin: 20px 0;
+    }
+    
+    .level-badge {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #ffc107;
+      color: black;
+      border-radius: 20px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
   </style>
 </head>
 <body>
@@ -91,6 +220,7 @@
     </nav>
   </header>
 
+  <!-- Role Selection Section -->
   <div id="role-selection" class="main-container">
     <div class="map-img">
       <img src="image/Map.svg" alt="Map Path"/>
@@ -98,30 +228,487 @@
     <div class="path-choice">
         <h2>Pick Your Data Path</h2>
         <p>Select the path that aligns with your career goals in the field of data.</p>
-        <button onclick="showQuestion()">Data Analyst</button>
-        <button onclick="showQuestion()">Data Science</button>
+        <button onclick="selectPath('data_analyst')">Data Analyst</button>
+        <button onclick="selectPath('data_engineer')">Data Engineer</button>
+        <button onclick="selectPath('data_scientist')">Data Scientist</button>
     </div>
   </div>
-  <div id="question-section" class="main-container" style="display: none; flex-wrap: wrap; justify-content: space-between;">
-    <div style="flex: 1; padding: 40px;">
-      <h2>Question 1:<br>Data Preparation</h2>
-      <p>What is your approach for cleaning and preparing data for analysis?</p>
-    </div>
-    <div style="flex: 1; padding: 40px;">
-      <label for="answer"><strong>Your Answer</strong></label><br>
-      <input type="text" id="answer" placeholder="Describe your process..." style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;" />
-      <small>e.g., dealing with missing values, data normalization</small><br><br>
-      <button style="padding: 12px 24px; background: #ffc107; border: 1px solid #000; font-weight: bold;">Next</button>
+
+  <!-- User Registration Section -->
+  <div id="user-registration" class="main-container" style="display: none;">
+    <div style="flex: 1; text-align: center;">
+      <h2>Welcome to Your Learning Journey!</h2>
+      <p>Let's get to know you better to personalize your experience.</p>
+      <br>
+      <div style="max-width: 400px; margin: 0 auto;">
+        <label for="username"><strong>Your Name</strong></label><br>
+        <input type="text" id="username" placeholder="Enter your name" 
+               style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc;" />
+        
+        <div id="selected-path" style="margin: 20px 0; padding: 10px; background: #e6f1f8; border-radius: 5px;">
+          <strong>Selected Path: </strong><span id="path-display"></span>
+        </div>
+        
+        <button onclick="startAssessment()" 
+                style="padding: 12px 24px; background: #ffc107; border: 1px solid #000; font-weight: bold; border-radius: 6px; cursor: pointer;">
+          Start Assessment
+        </button>
+      </div>
     </div>
   </div>
+
+  <!-- Loading Section -->
+  <div id="loading-section" class="main-container" style="display: none;">
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <h3>Generating Your Personalized Assessment...</h3>
+      <p>Our AI is creating questions tailored to your chosen path.</p>
+    </div>
+  </div>
+
+  <!-- Assessment Section -->
+  <div id="assessment-section" class="assessment-container">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+    </div>
+    
+    <div id="assessment-content">
+      <!-- Dynamic assessment questions will be loaded here -->
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+      <button id="next-btn" onclick="nextQuestion()" 
+              style="padding: 12px 24px; background: #ffc107; border: 1px solid #000; font-weight: bold; border-radius: 6px; cursor: pointer; display: none;">
+        Next Question
+      </button>
+      <button id="submit-btn" onclick="submitAssessment()" 
+              style="padding: 12px 24px; background: #28a745; color: white; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; display: none;">
+        Submit Assessment
+      </button>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div id="results-section" class="results-container">
+    <div class="results-card">
+      <h2>Assessment Complete!</h2>
+      <div class="score-display" id="score-display">--</div>
+      <div class="level-badge" id="level-badge">Your Level</div>
+      <div id="recommendation-text" style="margin: 20px 0; font-size: 1.1rem;"></div>
+      
+      <button onclick="startLearning()" 
+              style="padding: 15px 30px; background: #ffc107; border: 1px solid #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 1.1rem; margin-top: 20px;">
+        Start Learning Journey
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Messages -->
+  <div id="error-container" style="display: none; max-width: 800px; margin: 0 auto; padding: 20px;">
+    <div class="error-message" id="error-message"></div>
+    <div style="text-align: center;">
+      <button onclick="location.reload()" 
+              style="padding: 12px 24px; background: #ffc107; border: 1px solid #000; font-weight: bold; border-radius: 6px; cursor: pointer;">
+        Try Again
+      </button>
+    </div>
+  </div>
+
   <footer>
     &copy; 2025 by Hackathon Team
   </footer>
-</body>
-<script>
-    function showQuestion() {
-      document.getElementById("role-selection").style.display = "none";
-      document.getElementById("question-section").style.display = "flex";
+
+  <script>
+    // Global variables
+    let selectedSpecialization = '';
+    let currentUser = null;
+    let assessmentData = null;
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    
+    // API Configuration
+    const API_BASE_URL = 'http://localhost:8000/api'; // Update this to match your backend
+    
+    // Utility function for API calls
+    async function makeAPICall(endpoint, method = 'GET', data = null) {
+      try {
+        const config = {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        };
+        
+        if (data) {
+          config.body = JSON.stringify(data);
+        }
+        
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        return result;
+      } catch (error) {
+        console.error('API call failed:', error);
+        showError(`Connection failed: ${error.message}. Make sure the backend server is running.`);
+        return null;
+      }
+    }
+
+    // Function to extract JSON from mixed responses (from AI)
+    function extractJSONFromResponse(responseText) {
+      try {
+        return JSON.parse(responseText);
+      } catch (e) {
+        // Try to extract JSON from text that might contain additional content
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          try {
+            return JSON.parse(jsonMatch[0]);
+          } catch (e2) {
+            console.error('Failed to parse JSON:', e2);
+            return null;
+          }
+        }
+        return null;
+      }
+    }
+    
+    function selectPath(specialization) {
+      selectedSpecialization = specialization;
+      document.getElementById('role-selection').style.display = 'none';
+      document.getElementById('user-registration').style.display = 'flex';
+      
+      const pathDisplay = specialization === 'data_analyst' ? 'Data Analyst' : 
+                          specialization === 'data_engineer' ? 'Data Engineer' : 'Data Scientist';
+      document.getElementById('path-display').textContent = pathDisplay;
+    }
+    
+    async function startAssessment() {
+      const username = document.getElementById('username').value.trim();
+      
+      if (!username) {
+        showError('Please enter your name to continue.');
+        return;
+      }
+      
+      // Hide registration and show loading
+      document.getElementById('user-registration').style.display = 'none';
+      document.getElementById('loading-section').style.display = 'flex';
+      
+      try {
+        // Register user
+        const loginResponse = await makeAPICall('/user/login', 'POST', {
+          username: username,
+          specialization: selectedSpecialization
+        });
+        
+        if (!loginResponse) {
+          return; // Error already handled in makeAPICall
+        }
+        
+        currentUser = {
+          user_id: loginResponse.user_id,
+          username: username,
+          specialization: selectedSpecialization
+        };
+        
+        // Get assessment questions
+        const assessmentResponse = await makeAPICall(`/assessment/${currentUser.user_id}`);
+        
+        if (!assessmentResponse) {
+          return; // Error already handled in makeAPICall
+        }
+        
+        // Handle different response formats from AI
+        if (typeof assessmentResponse === 'string') {
+          assessmentData = extractJSONFromResponse(assessmentResponse);
+        } else {
+          assessmentData = assessmentResponse;
+        }
+        
+        if (!assessmentData || !assessmentData.questions) {
+          showError('Failed to load assessment questions. Please try again.');
+          return;
+        }
+        
+        // Start the assessment
+        document.getElementById('loading-section').style.display = 'none';
+        document.getElementById('assessment-section').style.display = 'block';
+        
+        currentQuestionIndex = 0;
+        userAnswers = [];
+        displayQuestion();
+        
+      } catch (error) {
+        console.error('Assessment start failed:', error);
+        showError('Failed to start assessment. Please check your connection and try again.');
+      }
+    }
+    
+    function displayQuestion() {
+      if (!assessmentData || !assessmentData.questions) {
+        showError('No questions available.');
+        return;
+      }
+      
+      const questions = assessmentData.questions;
+      const question = questions[currentQuestionIndex];
+      
+      // Update progress bar
+      const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+      document.getElementById('progress-fill').style.width = `${progress}%`;
+      
+      // Create question HTML
+      const questionHTML = `
+        <div class="question-card">
+          <h3>Question ${currentQuestionIndex + 1} of ${questions.length}</h3>
+          <p style="font-size: 1.1rem; margin-bottom: 20px;">${question.question}</p>
+          <div id="options-container">
+            ${question.options.map((option, index) => `
+              <div class="option" onclick="selectOption(${index})" data-index="${index}">
+                ${String.fromCharCode(65 + index)}. ${option}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('assessment-content').innerHTML = questionHTML;
+      
+      // Show appropriate button
+      if (currentQuestionIndex === questions.length - 1) {
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'inline-block';
+      } else {
+        document.getElementById('next-btn').style.display = 'inline-block';
+        document.getElementById('submit-btn').style.display = 'none';
+      }
+    }
+    
+    function selectOption(index) {
+      // Remove previous selections
+      document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      
+      // Select current option
+      const selectedOption = document.querySelector(`[data-index="${index}"]`);
+      selectedOption.classList.add('selected');
+      
+      // Store the answer
+      const question = assessmentData.questions[currentQuestionIndex];
+      userAnswers[currentQuestionIndex] = {
+        question_id: question.id,
+        answer: index.toString()
+      };
+    }
+    
+    function nextQuestion() {
+      if (!userAnswers[currentQuestionIndex]) {
+        showError('Please select an answer before continuing.');
+        return;
+      }
+      
+      currentQuestionIndex++;
+      displayQuestion();
+    }
+    
+    async function submitAssessment() {
+      if (!userAnswers[currentQuestionIndex]) {
+        showError('Please select an answer before submitting.');
+        return;
+      }
+      
+      // Show loading
+      document.getElementById('assessment-section').style.display = 'none';
+      document.getElementById('loading-section').style.display = 'flex';
+      document.querySelector('#loading-section .loading h3').textContent = 'Evaluating Your Assessment...';
+      document.querySelector('#loading-section .loading p').textContent = 'Our AI is analyzing your answers to determine your skill level.';
+      
+      try {
+        const submitResponse = await makeAPICall('/assessment/submit', 'POST', {
+          user_id: currentUser.user_id,
+          answers: userAnswers
+        });
+        
+        if (!submitResponse) {
+          return; // Error already handled
+        }
+        
+        // Display results
+        displayResults(submitResponse);
+        
+      } catch (error) {
+        console.error('Assessment submission failed:', error);
+        showError('Failed to submit assessment. Please try again.');
+      }
+    }
+    
+    function displayResults(results) {
+      document.getElementById('loading-section').style.display = 'none';
+      document.getElementById('results-section').style.display = 'block';
+      
+      // Update display with results
+      document.getElementById('score-display').textContent = `${results.score}%`;
+      document.getElementById('level-badge').textContent = results.level.toUpperCase();
+      document.getElementById('recommendation-text').textContent = results.recommendation;
+      
+      // Store results for later use
+      currentUser.level = results.level;
+      currentUser.score = results.score;
+    }
+    
+    function startLearning() {
+      // Redirect to learning dashboard instead of Streamlit
+      const params = new URLSearchParams({
+        user_id: currentUser.user_id,
+        username: currentUser.username,
+        specialization: currentUser.specialization,
+        level: currentUser.level,
+        score: currentUser.score
+      });
+      
+      window.location.href = `learning.html?${params.toString()}`;
+    }
+    
+    function showError(message) {
+      // Hide all other sections
+      document.getElementById('role-selection').style.display = 'none';
+      document.getElementById('user-registration').style.display = 'none';
+      document.getElementById('loading-section').style.display = 'none';
+      document.getElementById('assessment-section').style.display = 'none';
+      document.getElementById('results-section').style.display = 'none';
+      
+      // Show error
+      document.getElementById('error-message').textContent = message;
+      document.getElementById('error-container').style.display = 'block';
+    }
+    
+    // Check if user is returning with URL parameters (no sessionStorage)
+    window.addEventListener('load', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const returning = urlParams.get('returning');
+      const demo = urlParams.get('demo');
+      const path = urlParams.get('path');
+      
+      if (demo === 'true' && path) {
+        // Handle demo mode
+        selectedSpecialization = path;
+        const demoUser = {
+          username: 'Demo User',
+          specialization: path,
+          isDemo: true
+        };
+        
+        document.getElementById('role-selection').innerHTML = `
+          <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+            <h2>🚀 Welcome to Demo Mode!</h2>
+            <p>You're exploring the ${path === 'data_engineer' ? 'Data Engineering' : 'Data Science'} path.</p>
+            <p style="margin: 20px 0; padding: 15px; background: #fff3cd; border-radius: 5px;">
+              <strong>Note:</strong> This is a demonstration. Your progress won't be saved.
+            </p>
+            <button onclick="startDemoAssessment()" style="padding: 15px 30px; background: #ffc107; border: 1px solid #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 1.1rem;">
+              Try Sample Assessment
+            </button>
+            <br><br>
+            <button onclick="window.location.href='index.html'" style="padding: 10px 20px; background: #6c757d; color: white; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">
+              Back to Home
+            </button>
+          </div>
+        `;
+        return;
+      }
+      
+      if (returning) {
+        // User is returning from learning session
+        const username = urlParams.get('username');
+        const specialization = urlParams.get('specialization');
+        
+        if (username && specialization) {
+          // Show a welcome back message
+          document.getElementById('role-selection').innerHTML = `
+            <div style="text-align: center;">
+              <h2>Welcome back, ${username}! 👋</h2>
+              <p>Continue your ${specialization === 'data_engineer' ? 'Data Engineering' : 'Data Science'} journey.</p>
+              <button onclick="continueLearningFromReturn()" style="padding: 12px 24px; background: #ffc107; border: 1px solid #000; font-weight: bold; border-radius: 6px; cursor: pointer; margin: 20px;">
+                Continue Learning
+              </button>
+              <button onclick="location.reload()" style="padding: 12px 24px; background: #6c757d; color: white; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; margin: 20px;">
+                Start New Session
+              </button>
+            </div>
+          `;
+        }
+      }
+    });
+    
+    function startDemoAssessment() {
+      // Create a simple demo user for assessment
+      currentUser = {
+        user_id: 'demo-' + Date.now(),
+        username: 'Demo User',
+        specialization: selectedSpecialization,
+        isDemo: true
+      };
+      
+      // Create demo assessment data
+      assessmentData = {
+        questions: [
+          {
+            id: 1,
+            question: selectedSpecialization === 'data_analyst' 
+              ? "What is the primary goal of data visualization?"
+              : selectedSpecialization === 'data_engineer' 
+                ? "What is the primary purpose of an ETL pipeline?"
+                : "What is the main goal of exploratory data analysis?",
+            options: selectedSpecialization === 'data_analyst'
+              ? ["To make data more appealing", "To communicate insights clearly and effectively", "To reduce data size", "To create complex charts"]
+              : selectedSpecialization === 'data_engineer'
+                ? ["To extract, transform, and load data", "To create visualizations", "To train models", "To write documentation"]
+                : ["To build predictive models", "To understand data patterns and quality", "To deploy applications", "To write reports"]
+          },
+          {
+            id: 2,
+            question: selectedSpecialization === 'data_analyst'
+              ? "Which tool is most commonly used for business intelligence dashboards?"
+              : selectedSpecialization === 'data_engineer'
+                ? "Which database type is best for handling large-scale analytics?"
+                : "Which statistical measure is most affected by outliers?",
+            options: selectedSpecialization === 'data_analyst'
+              ? ["Python", "Tableau", "Docker", "Git"]
+              : selectedSpecialization === 'data_engineer'
+                ? ["Relational Database", "NoSQL Database", "Data Warehouse", "In-memory Database"]
+                : ["Mean", "Median", "Mode", "Range"]
+          }
+        ]
+      };
+      
+      // Start the demo assessment
+      document.getElementById('role-selection').style.display = 'none';
+      document.getElementById('assessment-section').style.display = 'block';
+      
+      currentQuestionIndex = 0;
+      userAnswers = [];
+      displayQuestion();
+    }
+    
+    function continueLearningFromReturn() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams({
+        user_id: urlParams.get('user_id'),
+        username: urlParams.get('username'),
+        specialization: urlParams.get('specialization'),
+        level: urlParams.get('level'),
+        returning: 'true'
+      });
+      
+      // Redirect to HTML learning dashboard instead of Streamlit
+      window.location.href = `learning.html?${params.toString()}`;
     }
   </script>
+</body>
 </html>
