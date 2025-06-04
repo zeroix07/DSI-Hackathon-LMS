@@ -1,7 +1,7 @@
 # AI-Powered Learning Platform
-## Platform Pembelajaran Data Engineer & Data Scientist dengan AI
+## Platform Pembelajaran Data Engineer, Data Analyst & Data Scientist dengan AI
 
-Platform pembelajaran interaktif yang menggunakan kecerdasan buatan untuk memberikan pengalaman belajar yang dipersonalisasi dalam bidang Data Engineering dan Data Science.
+Platform pembelajaran interaktif yang menggunakan kecerdasan buatan untuk memberikan pengalaman belajar yang dipersonalisasi dalam bidang Data Engineering, Data Analyst dan Data Science.
 
 ## 🎯 Fitur Utama
 
@@ -33,8 +33,8 @@ Laporan & Rekomendasi
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/[username]/ai-learning-platform.git
-cd ai-learning-platform
+git https://github.com/zeroix07/DSI-Hackathon-LMS.git
+cd DSI-Hackathon-LMS
 ```
 
 ### 2. Setup Environment
@@ -63,18 +63,11 @@ python api_main.py
 ```
 API akan berjalan di: `http://localhost:8000/`
 
-#### Frontend (Streamlit)
-Buka terminal baru dan aktifkan environment:
-```bash
-venv\Scripts\activate
-streamlit run api_streamlit.py
-```
-Web app akan berjalan di: `http://localhost:8501/`
 
 ## 🛠️ Teknologi yang Digunakan
 
 - **Backend**: FastAPI
-- **Frontend**: Streamlit
+- **Frontend**: HTML, CSS, JavaScript
 - **AI/LLM**: Groq API
 - **Search**: Tavily API
 - **Language**: Python
@@ -84,7 +77,7 @@ Web app akan berjalan di: `http://localhost:8501/`
 ```
 ai-learning-platform/
 ├── api_main.py              # Backend API server
-├── api_streamlit.py         # Frontend Streamlit app
+├── index.html               # Main Page
 ├── requirements.txt         # Python dependencies
 ├── .env                     # Environment variables
 ├── .gitignore              # Git ignore file
@@ -103,7 +96,7 @@ ai-learning-platform/
 ## 🎓 Cara Penggunaan
 
 1. **Login** ke platform
-2. **Pilih peminatan** (Data Engineer/Data Scientist)
+2. **Pilih peminatan** (Data Engineer/Data Analyst/Data Scientist)
 3. **Ikuti assessment** untuk menentukan level kemampuan
 4. **Pelajari materi** yang telah dipersonalisasi
 5. **Gunakan chatbot** untuk bertanya tentang materi
