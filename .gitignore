@@ -1,11 +1,43 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.pyw
-*.pyz
-*.pywz
-*.pyzw
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
 
+# Environment variables
 .env
+.env.local
+
+# AI Models (large files)
+models/
+*.bin
+*.safetensors
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# Temporary files
+temp/
+tmp/.venv/
+.DS_Store
+__pycache__/
