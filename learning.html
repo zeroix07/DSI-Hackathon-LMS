@@ -421,7 +421,7 @@
       <a href="#">About</a>
     </nav>
     <div class="user-info">
-      <span id="user-name">Welcome!</span>
+      <span id="user-name">Selamat Datang!</span>
       <span id="user-badge" class="user-badge">Learner</span>
     </div>
   </header>
@@ -430,8 +430,8 @@
   <div id="loading-section" style="display: none;">
     <div class="loading">
       <div class="loading-spinner"></div>
-      <h3>Generating Your Personalized Learning Material...</h3>
-      <p>Our AI is creating content tailored to your level and specialization.</p>
+      <h3>Membuat Material Belajar Pribadi Anda...</h3>
+      <p>AI kami membuat materi yang disesuaikan dengan level dan spesialisasi Anda.</p>
     </div>
   </div>
 
@@ -441,21 +441,21 @@
     <div class="content-area">
       <!-- Progress Section -->
       <div class="progress-indicator">
-        <h3 id="progress-title">Your Learning Progress</h3>
+        <h3 id="progress-title">Kemajuan Belajar Anda</h3>
         <div class="progress-bar">
           <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
         </div>
-        <p id="progress-text">Starting your personalized learning journey...</p>
+        <p id="progress-text">Memulai perjalanan belajar pribadi Anda...</p>
       </div>
 
       <!-- Learning Material Header -->
       <div class="section-header">
-        <h2 id="material-title">Loading Your Personalized Content...</h2>
+        <h2 id="material-title">Memuat Materi Pribadi Anda...</h2>
       </div>
 
       <!-- Learning Objectives -->
       <div id="objectives-section" class="learning-objectives">
-        <h3>🎯 Learning Objectives</h3>
+        <h3>🎯 Tujuan Belajar</h3>
         <div id="objectives-list">
           <!-- Dynamic objectives will be loaded here -->
         </div>
@@ -465,7 +465,7 @@
       <div id="prerequisites-section" style="display: none;">
         <div class="content-section">
           <div class="content-header">
-            <h3>📋 Prerequisites</h3>
+            <h3>📋 Prasyarat</h3>
           </div>
           <div class="content-body">
             <div id="prerequisites-list">
@@ -478,7 +478,7 @@
       <!-- Theory Overview -->
       <div class="content-section">
         <div class="content-header active" onclick="toggleSection(this)">
-          <h3>📚 Theory Overview</h3>
+          <h3>📚 Pengantar Teori</h3>
           <span class="expand-icon">▼</span>
         </div>
         <div class="content-body active">
@@ -491,7 +491,7 @@
       <!-- Practical Examples -->
       <div class="content-section">
         <div class="content-header" onclick="toggleSection(this)">
-          <h3>💡 Practical Examples</h3>
+          <h3>💡 Contoh Praktis</h3>
           <span class="expand-icon">▼</span>
         </div>
         <div class="content-body">
@@ -516,38 +516,38 @@
 
       <!-- Quiz Section -->
       <div class="quiz-section">
-        <h3>🧠 Ready to Test Your Knowledge?</h3>
-        <p>Complete the material above, then take the quiz to demonstrate your understanding.</p>
+        <h3>🧠 Siap untuk Menguji Pengetahuan Anda?</h3>
+        <p>Selesaikan materi di atas, lalu ambil kuis untuk membuktikan pemahaman Anda.</p>
         <button id="take-quiz-btn" class="btn btn-primary" onclick="takeQuiz()" disabled>
-          Take Knowledge Quiz
+          Kuis Pengetahuan
         </button>
       </div>
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <button class="btn btn-secondary" onclick="goBack()">← Back to Courses</button>
-        <button class="btn btn-primary" onclick="viewProgress()">📊 View Progress</button>
+        <button class="btn btn-secondary" onclick="goBack()">← Kembali ke Kursus</button>
+        <button class="btn btn-primary" onclick="viewProgress()">📊 Lihat Kemajuan</button>
         <button class="btn btn-secondary" onclick="nextModule()" style="display: none;" id="next-module-btn">
-          Next Module →
+          Modul Berikutnya →
         </button>
       </div>
     </div>
 
     <!-- AI Tutor Chat Area -->
     <div class="chat-area">
-      <h3>🤖 AI Tutor</h3>
+      <h3>🤖 Tutor AI</h3>
       <p style="margin-bottom: 15px; color: #666; font-size: 0.9rem;">
-        Ask questions about the material or request clarification on any topic.
+        Tanya pertanyaan tentang materi atau minta penjelasan tentang topik apa saja.
       </p>
       
       <div id="chat-container" class="chat-container">
         <div class="ai-message">
-          <strong>AI Tutor:</strong> Hello! I'm here to help you understand the material. Feel free to ask me any questions about what you're learning!
+          <strong>Tutor AI:</strong> Halo! Saya di sini untuk membantu Anda memahami materi. Silakan tanya saya tentang apa saja yang Anda pelajari!
         </div>
       </div>
       
       <div class="typing-indicator" id="typing-indicator">
-        AI is typing...
+        AI sedang mengetik...
       </div>
       
       <div class="chat-input-container">
@@ -555,17 +555,17 @@
           type="text" 
           id="chat-input" 
           class="chat-input" 
-          placeholder="Ask about the material..."
+          placeholder="Tanya tentang materi..."
           onkeypress="handleChatKeyPress(event)"
         />
         <button class="send-btn" onclick="sendMessage()">➤</button>
       </div>
       
       <div style="margin-top: 15px; font-size: 0.8rem; color: #666;">
-        💡 <strong>Try asking:</strong><br>
-        • "Explain this concept in simpler terms"<br>
-        • "Give me more examples"<br>
-        • "How is this used in real projects?"
+        💡 <strong>Coba tanya:</strong><br>
+        • "Jelaskan konsep ini dalam istilah yang lebih sederhana"<br>
+        • "Berikan saya lebih banyak contoh"<br>
+        • "Bagaimana ini digunakan dalam proyek nyata?"
       </div>
     </div>
   </div>
@@ -649,17 +649,17 @@
           title: 'Data Pipeline Fundamentals',
           subtitle: 'Building robust and scalable data processing systems',
           learning_objectives: [
-            'Understand the components of a data pipeline',
-            'Learn about ETL vs ELT processes',
-            'Master data validation and quality checks',
-            'Implement error handling and monitoring',
-            'Design for scalability and performance'
+            'Mengerti komponen dari sebuah data pipeline',
+            'Belajar tentang proses ETL vs ELT',
+            'Menguasai validasi data dan pemeriksaan kualitas',
+            'Menerapkan penanganan kesalahan dan pemantauan',
+            'Merancang untuk skalabilitas dan performa'
           ],
           prerequisites: [
-            'Basic understanding of databases',
-            'Familiarity with SQL',
-            'Python programming basics',
-            'Understanding of data formats (JSON, CSV, Parquet)'
+            'Pemahuan dasar tentang database',
+            'Kenalan dengan SQL',
+            'Pemrograman Python dasar',
+            'Pemahuan tentang format data (JSON, CSV, Parquet)'
           ],
           content: {
             theory: {
@@ -667,18 +667,18 @@
               
               The key principles of effective data pipelines include: automation, monitoring, scalability, fault tolerance, and data quality assurance. Understanding these principles is crucial for building systems that can handle real-world data challenges.`,
               key_concepts: [
-                'Data Ingestion: Collecting data from various sources (APIs, databases, files)',
-                'Data Transformation: Cleaning, formatting, and enriching data',
-                'Data Validation: Ensuring data quality and integrity',
-                'Data Loading: Storing processed data in target systems',
-                'Monitoring: Tracking pipeline performance and detecting issues',
-                'Orchestration: Managing dependencies and scheduling'
+                'Data Ingestion: Mengumpulkan data dari berbagai sumber (APIs, databases, files)',
+                'Data Transformation: Membersihkan, memformat, dan memperkaya data',
+                'Data Validation: Memastikan data kualitas dan integritas',
+                'Data Loading: Menyimpan data yang diproses di sistem tujuan',
+                'Monitoring: Melacak performa pipeline dan mendeteksi masalah',
+                'Orchestration: Mengelola dependensi dan penjadwalan'
               ]
             },
             practical_examples: [
               {
-                title: 'Building a Simple ETL Pipeline',
-                description: 'Create a pipeline that extracts user data from a database, transforms it by adding calculated fields, and loads it into a data warehouse.',
+                title: 'Membangun Pipeline ETL Sederhana',
+                description: 'Buat sebuah pipeline yang mengekstrak data pengguna dari database, mengubahnya dengan menambahkan bidang yang dihitung, dan memuatnya ke dalam data warehouse.',
                 code_snippet: `import pandas as pd
 from sqlalchemy import create_engine
 
@@ -701,11 +701,11 @@ warehouse_engine = create_engine('postgresql://warehouse_db')
 user_data = extract_user_data(source_engine)
 transformed_data = transform_user_data(user_data)
 load_to_warehouse(transformed_data, warehouse_engine)`,
-                explanation: 'This example demonstrates a basic ETL process using Python and pandas. The pipeline extracts user data, adds calculated metrics, and loads the results to a data warehouse. In production, you would add error handling, logging, and scheduling.'
+                explanation: 'Contoh ini menunjukkan sebuah proses ETL sederhana menggunakan Python dan pandas. Pipeline ini mengekstrak data pengguna, menambahkan metrik yang dihitung, dan memuat hasilnya ke dalam data warehouse. Dalam produksi, Anda akan menambahkan penanganan kesalahan, logging, dan penjadwalan.'
               },
               {
-                title: 'Data Validation Implementation',
-                description: 'Implement data quality checks to ensure pipeline reliability.',
+                title: 'Implementasi Validasi Data',
+                description: 'Implementasi pemeriksaan kualitas data untuk memastikan keandalan pipeline.',
                 code_snippet: `def validate_data(df):
     validation_results = {
         'total_records': len(df),
@@ -726,13 +726,13 @@ load_to_warehouse(transformed_data, warehouse_engine)`,
               }
             ],
             best_practices: [
-              'Always implement comprehensive error handling and retry logic',
-              'Use incremental processing when possible to improve efficiency',
-              'Implement data lineage tracking to understand data flow',
-              'Set up monitoring and alerting for pipeline failures',
-              'Design idempotent operations to handle re-runs safely',
-              'Use appropriate data formats (Parquet for analytics, Avro for streaming)',
-              'Implement proper logging for debugging and auditing',
+              'Selalu implementasi penanganan kesalahan dan logika retry',
+              'Gunakan pemrosesan incremental ketika mungkin untuk meningkatkan efisiensi',
+              'Implementasi pelacakan data lineage untuk memahami aliran data',
+              'Mengatur monitoring dan pemberitahuan untuk kegagalan pipeline',
+              'Merancang operasi idempotent untuk menangani re-runs dengan aman',
+              'Gunakan format data yang sesuai (Parquet untuk analisis, Avro untuk streaming)',
+              'Implementasi logging yang tepat untuk debugging dan audit',
               'Test pipelines with realistic data volumes and edge cases'
             ]
           }
@@ -740,39 +740,39 @@ load_to_warehouse(transformed_data, warehouse_engine)`,
       } else if (isDataAnalyst) {
         return {
           id: 'demo-material-da',
-          title: 'SQL Fundamentals for Data Analysis',
-          subtitle: 'Master SQL queries to extract insights from data',
+          title: 'SQL Fundamentals untuk Analisis Data',
+          subtitle: 'Menguasai SQL queries untuk mengekstrak insight dari data',
           learning_objectives: [
-            'Understand SQL syntax and basic query structure',
-            'Learn to filter and sort data effectively',
-            'Master aggregate functions and grouping',
-            'Create joins to combine data from multiple tables',
-            'Write subqueries and window functions for advanced analysis'
+            'Mengerti sintaksis SQL dan struktur query dasar',
+            'Belajar untuk memfilter dan mengurutkan data secara efektif',
+            'Menguasai fungsi agregasi dan pengelompokan',
+            'Membuat joins untuk menggabungkan data dari beberapa tabel',
+            'Menulis subqueries dan window functions untuk analisis lanjutan'
           ],
           prerequisites: [
-            'Basic understanding of databases and tables',
-            'Familiarity with spreadsheet software (Excel/Google Sheets)',
-            'Understanding of basic mathematical operations',
-            'Knowledge of data types (numbers, text, dates)'
+            'Pemahuan dasar tentang database dan tabel',
+            'Kenalan dengan perangkat lunak spreadsheet (Excel/Google Sheets)',
+            'Pemahuan tentang operasi matematika dasar',
+            'Pengetahuan tentang tipe data (angka, teks, tanggal)'
           ],
           content: {
             theory: {
-              overview: `SQL (Structured Query Language) is the foundation of data analysis. It allows you to retrieve, filter, aggregate, and manipulate data stored in relational databases. For data analysts, SQL is essential for extracting insights, creating reports, and answering business questions through data exploration.
+              overview: `SQL (Structured Query Language) adalah fondasi dari analisis data. Ini memungkinkan Anda untuk mengambil, memfilter, mengagregasi, dan memanipulasi data yang disimpan di database relasional. Untuk analis data, SQL sangat penting untuk mengekstrak insight, membuat laporan, dan menjawab pertanyaan bisnis melalui eksplorasi data.
               
-              SQL follows a declarative approach - you specify what you want, not how to get it. This makes it powerful for data analysis tasks like calculating metrics, identifying trends, and creating summaries that drive business decisions.`,
+              SQL mengikuti pendekatan deklaratif - Anda menentukan apa yang Anda inginkan, bukan bagaimana untuk mendapatkannya. Ini membuatnya kuat untuk tugas analisis data seperti menghitung metrik, mengidentifikasi tren, dan membuat ringkasan yang memacu keputusan bisnis.`,
               key_concepts: [
-                'SELECT statements: Retrieving specific columns and rows',
-                'WHERE clauses: Filtering data based on conditions',
-                'GROUP BY: Aggregating data for summary statistics',
-                'JOIN operations: Combining data from multiple tables',
+                'SELECT statements: Mengambil kolom dan baris tertentu',
+                'WHERE clauses: Memfilter data berdasarkan kondisi',
+                'GROUP BY: Mengagregasi data untuk statistik ringkasan',
+                'JOIN operations: Menggabungkan data dari beberapa tabel',
                 'Aggregate functions: COUNT, SUM, AVG, MIN, MAX',
-                'Window functions: Advanced analytics and ranking'
+                'Window functions: Analisis lanjutan dan peringkat'
               ]
             },
             practical_examples: [
               {
-                title: 'Basic Data Exploration',
-                description: 'Learn to explore and understand your dataset using fundamental SQL queries.',
+                title: 'Eksplorasi Data Dasar',
+                description: 'Belajar untuk menjelajahi dan memahami dataset Anda menggunakan query SQL dasar.',
                 code_snippet: `-- Get overview of the sales table
 SELECT COUNT(*) as total_records,
        MIN(order_date) as earliest_date,
@@ -799,11 +799,11 @@ FROM sales
 WHERE order_date >= '2023-01-01'
 GROUP BY month
 ORDER BY month;`,
-                explanation: 'These queries demonstrate fundamental data analysis techniques: getting data overview, identifying top performers, and analyzing trends over time. These are common starting points for most business analysis projects.'
+                explanation: 'Query ini menunjukkan teknik analisis data dasar: mendapatkan gambaran data, mengidentifikasi pemain teratas, dan menganalisis tren seiring waktu. Ini adalah titik awal umum untuk kebanyakan proyek analisis bisnis.'
               },
               {
                 title: 'Advanced Data Analysis with Joins',
-                description: 'Combine data from multiple tables to create comprehensive business insights.',
+                description: 'Menggabungkan data dari beberapa tabel untuk membuat insight bisnis yang komprehensif.',
                 code_snippet: `-- Customer analysis with demographic data
 SELECT c.customer_id,
        c.customer_name,
@@ -835,53 +835,53 @@ ORDER BY total_revenue DESC;`,
               }
             ],
             best_practices: [
-              'Always start with exploratory queries to understand your data',
-              'Use meaningful aliases for tables and columns to improve readability',
-              'Comment your complex queries to explain the business logic',
-              'Be specific with date ranges and filters to improve performance',
-              'Use aggregate functions with GROUP BY for summary analysis',
-              'Validate your results by cross-checking with known metrics',
-              'Test queries on small datasets before running on large tables',
-              'Document your analysis process for reproducibility'
+              'Selalu mulai dengan query eksplorasi untuk memahami data Anda',
+              'Gunakan alias yang berarti untuk tabel dan kolom untuk meningkatkan keterbacaan',
+              'Komentari query kompleks Anda untuk menjelaskan logika bisnis',
+              'Berikan detail dengan rentang tanggal dan filter untuk meningkatkan performa',
+              'Gunakan fungsi agregasi dengan GROUP BY untuk analisis ringkasan',
+              'Validasi hasil Anda dengan memeriksa kembali dengan metrik yang diketahui',
+              'Uji query pada dataset kecil sebelum menjalankan pada tabel besar',
+              'Dokumentasikan proses analisis Anda untuk reproduksi'
             ]
           }
         };
       } else {
         return {
           id: 'demo-material-ds',
-          title: 'Exploratory Data Analysis (EDA)',
-          subtitle: 'Discovering insights and patterns in your data',
+          title: 'Analisis Data Eksploratori (EDA)',
+          subtitle: 'Mencari insight dan pola dalam data Anda',
           learning_objectives: [
-            'Master the fundamentals of exploratory data analysis',
-            'Learn to identify data quality issues',
-            'Understand statistical measures and distributions',
-            'Create effective data visualizations',
-            'Develop insights to guide modeling decisions'
+            'Menguasai dasar-dasar analisis data eksploratori',
+            'Belajar untuk mengidentifikasi masalah kualitas data',
+            'Memahami ukuran statistik dan distribusi',
+            'Membuat visualisasi data yang efektif',
+            'Mengembangkan insight untuk membimbing pemodelan'
           ],
           prerequisites: [
-            'Basic statistics knowledge',
-            'Python programming fundamentals',
-            'Familiarity with pandas and numpy',
-            'Understanding of data types and structures'
+            'Pengetahuan statistik dasar',
+            'Pemrograman Python dasar',
+            'Kenalan dengan pandas dan numpy',
+            'Pemahuan tentang tipe data dan struktur'
           ],
           content: {
             theory: {
-              overview: `Exploratory Data Analysis (EDA) is a critical first step in any data science project. It involves examining and visualizing data to understand its structure, identify patterns, detect anomalies, and formulate hypotheses. EDA helps data scientists make informed decisions about data preprocessing, feature engineering, and modeling approaches.
+              overview: `Analisis Data Eksploratori (EDA) adalah langkah kritis pertama dalam setiap proyek data science. Ini melibatkan pemeriksaan dan visualisasi data untuk memahami struktur, mengidentifikasi pola, mendeteksi anomali, dan membuat hipotesis. EDA membantu data scientists membuat keputusan yang tepat tentang pemrosesan data, pengembangan fitur, dan pendekatan pemodelan.
               
-              The goal of EDA is to maximize insight into the data while minimizing assumptions. Through systematic exploration, we can uncover hidden patterns, spot outliers, understand variable relationships, and assess data quality before proceeding with advanced analytics.`,
+              Tujuan EDA adalah memaksimalkan insight ke dalam data sambil meminimalkan asumsi. Melalui eksplorasi sistematis, kita dapat menemukan pola tersembunyi, menemukan outlier, memahami hubungan variabel, dan mengevaluasi kualitas data sebelum melanjutkan analisis lanjutan.`,
               key_concepts: [
-                'Descriptive Statistics: Mean, median, mode, standard deviation, quartiles',
-                'Data Distribution: Understanding normal, skewed, and multimodal distributions',
-                'Correlation Analysis: Identifying relationships between variables',
-                'Outlier Detection: Finding unusual or extreme data points',
-                'Missing Data Analysis: Understanding patterns in missing values',
-                'Feature Relationships: Exploring interactions between variables'
+                'Statistik Deskriptif: Mean, median, mode, standar deviasi, kuartil',
+                'Distribusi Data: Memahami distribusi normal, condong, dan multimodal',
+                'Analisis Korelasi: Mengidentifikasi hubungan antar variabel',
+                'Deteksi Anomali: Menemukan data yang tidak biasa atau ekstrem',
+                'Analisis Data yang Hilang: Memahami pola dalam data yang hilang',
+                'Hubungan Fitur: Menjelajahi interaksi antar variabel'
               ]
             },
             practical_examples: [
               {
-                title: 'Basic Data Profiling',
-                description: 'Generate a comprehensive overview of your dataset to understand its structure and quality.',
+                title: 'Profil Data Dasar',
+                description: 'Buat gambaran komprehensif tentang dataset Anda untuk memahami struktur dan kualitas.',
                 code_snippet: `import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -908,11 +908,11 @@ def data_profile(df):
 # Example usage
 df = pd.read_csv('your_dataset.csv')
 data_profile(df)`,
-                explanation: 'Data profiling gives you a quick overview of your dataset. This function checks data types, missing values, and basic statistics. The heatmap visualization helps identify patterns in missing data, which can inform your data cleaning strategy.'
+                explanation: 'Profil data memberikan gambaran cepat tentang dataset Anda. Fungsi ini memeriksa tipe data, nilai yang hilang, dan statistik dasar. Visualisasi heatmap membantu mengidentifikasi pola dalam data yang hilang, yang dapat memberikan informasi tentang strategi pembersihan data Anda.'
               },
               {
-                title: 'Correlation Analysis and Visualization',
-                description: 'Explore relationships between numerical variables to identify potential predictors.',
+                title: 'Analisis Korelasi dan Visualisasi',
+                description: 'Jelajahi hubungan antar variabel numerik untuk mengidentifikasi potensi prediktor.',
                 code_snippet: `def correlation_analysis(df, target_column=None):
     # Calculate correlation matrix
     correlation_matrix = df.corr()
@@ -937,18 +937,18 @@ data_profile(df)`,
         plt.show()
 
 correlation_analysis(df, target_column='target_variable')`,
-                explanation: 'Correlation analysis helps identify relationships between variables. Strong correlations can indicate multicollinearity issues or reveal important predictive features. The heatmap provides a visual representation of all pairwise correlations.'
+                explanation: 'Analisis korelasi membantu mengidentifikasi hubungan antar variabel. Korelasi yang kuat dapat menunjukkan masalah multikolinearitas atau mengungkapkan fitur prediktif yang penting. Heatmap memberikan representasi visual dari semua korelasi pasangan.'
               }
             ],
             best_practices: [
-              'Always start with understanding your data before any analysis',
-              'Use multiple visualization types to explore different aspects',
-              'Pay attention to data quality issues early in the process',
-              'Document your findings and insights throughout the EDA process',
-              'Consider the business context when interpreting patterns',
-              'Use statistical tests to validate observed patterns',
-              'Create reproducible EDA scripts for consistent analysis',
-              'Balance between thorough exploration and analysis paralysis'
+              'Selalu mulai dengan memahami data Anda sebelum analisis apa pun',
+              'Gunakan berbagai jenis visualisasi untuk menjelajahi berbagai aspek',
+              'Perhatikan masalah kualitas data awal dalam proses',
+              'Dokumentasikan hasil dan insight Anda selama proses EDA',
+              'Pertimbangkan konteks bisnis saat menafsirkan pola',
+              'Gunakan tes statistik untuk memvalidasi pola yang diamati',
+              'Buat skrip EDA yang dapat direproduksi untuk analisis konsisten',
+              'Seimbangkan antara eksplorasi yang mendalam dan analisis paralysis'
             ]
           }
         };
@@ -1001,7 +1001,7 @@ correlation_analysis(df, target_column='target_variable')`,
       let content = `<p style="line-height: 1.6; margin-bottom: 20px;">${theory.overview}</p>`;
       
       if (theory.key_concepts) {
-        content += `<h4 style="margin: 20px 0 15px 0; color: #333;">🔑 Key Concepts:</h4>`;
+        content += `<h4 style="margin: 20px 0 15px 0; color: #333;">🔑 Konsep Penting:</h4>`;
         content += theory.key_concepts.map(concept => 
           `<div class="best-practice">💡 ${concept}</div>`
         ).join('');
@@ -1016,7 +1016,7 @@ correlation_analysis(df, target_column='target_variable')`,
       const examples = learningMaterial.content.practical_examples;
       
       if (!examples || examples.length === 0) {
-        examplesContent.innerHTML = '<p>No practical examples available for this material.</p>';
+        examplesContent.innerHTML = '<p>Tidak ada contoh praktis yang tersedia untuk materi ini.</p>';
         return;
       }
       
@@ -1051,7 +1051,7 @@ correlation_analysis(df, target_column='target_variable')`,
       const practices = learningMaterial.content.best_practices;
       
       if (!practices || practices.length === 0) {
-        practicesContent.innerHTML = '<p>No best practices available for this material.</p>';
+        practicesContent.innerHTML = '<p>Tidak ada praktik terbaik yang tersedia untuk materi ini.</p>';
         return;
       }
       
@@ -1203,52 +1203,52 @@ correlation_analysis(df, target_column='target_variable')`,
       
       if (message.includes('explain') || message.includes('what is')) {
         if (isDataEngineer) {
-          return "Great question! In data engineering, it's important to understand the underlying architecture. Let me break this down step by step with a practical example that you might encounter in a real pipeline...";
+          return "Pertanyaan Bagus! Dalam data engineering, penting untuk memahami arsitektur di baliknya. Mari saya jelaskan langkah demi langkah dengan contoh praktis yang mungkin Anda temukan dalam pipeline nyata...";
         } else if (isDataAnalyst) {
-          return "Excellent question! In data analysis, this concept is crucial for extracting business insights. Let me explain this with a practical SQL example and show you how it applies to real business scenarios...";
+          return "Pertanyaan Bagus! Dalam analisis data, konsep ini sangat penting untuk mengekstrak insight bisnis. Mari saya jelaskan ini dengan contoh SQL praktis dan tunjukkan bagaimana ia diterapkan dalam skenario bisnis nyata...";
         } else {
-          return "Excellent question! In data science, this concept is fundamental to understanding patterns in data. Let me explain this with a statistical perspective and show you how it applies to real-world analysis...";
+          return "Pertanyaan Bagus! Dalam data science, konsep ini fundamental untuk memahami pola dalam data. Mari saya jelaskan ini dengan sudut pandang statistik dan tunjukkan bagaimana ia diterapkan dalam analisis nyata...";
         }
       }
       
       if (message.includes('example') || message.includes('show me')) {
         if (isDataEngineer) {
-          return "Here's a practical example you might see in production: Imagine you're building a real-time data pipeline for an e-commerce platform. You'd need to handle order data, user events, and inventory updates. The key is designing for scale and reliability...";
+          return "Berikut adalah contoh praktis yang mungkin Anda temukan dalam produksi: Bayangkan Anda membangun pipeline data nyata untuk platform e-commerce. Anda perlu menangani data pesanan, peristiwa pengguna, dan pembaruan inventaris. Kuncinya adalah merancang untuk skala dan reliabilitas...";
         } else if (isDataAnalyst) {
-          return "Let me give you a concrete example: Suppose you're analyzing sales performance for a retail company. You'd write SQL queries to identify trends, calculate key metrics, and create reports that help management make decisions. Here's how you'd approach it...";
+          return "Mari saya berikan contoh nyata: Bayangkan Anda menganalisis kinerja penjualan untuk perusahaan ritel. Anda akan menulis query SQL untuk mengidentifikasi tren, menghitung metrik kunci, dan membuat laporan yang membantu manajemen membuat keputusan. Berikut adalah cara Anda akan menangani...";
         } else {
-          return "Let me give you a concrete example: Suppose you're analyzing customer behavior data. You'd start by examining the distribution of key metrics, looking for patterns, and identifying potential outliers. Here's how you'd approach it...";
+          return "Mari sayi berikan contoh nyata: Bayangkan Anda menganalisis data perilaku pelanggan. Anda akan mulai dengan memeriksa distribusi metrik kunci, mencari pola, dan mengidentifikasi potensi outlier. Berikut adalah cara Anda akan menangani...";
         }
       }
       
       if (message.includes('how') || message.includes('implement')) {
-        return "That's a great implementation question! The approach depends on your specific use case, but here are the key steps and best practices you should follow...";
+        return "Pertanyaan implementasi yang bagus! Pendekatan tergantung pada kasus penggunaan Anda, tetapi berikut adalah langkah-langkah dan praktik terbaik yang harus Anda ikuti...";
       }
       
       if (message.includes('best practice') || message.includes('recommend')) {
-        return "For best practices, I always recommend starting with the fundamentals. Based on your current level, here are the most important things to focus on right now...";
+        return "Untuk praktik terbaik, saya selalu merekomendasikan memulai dari dasar. Berdasarkan level Anda saat ini, berikut adalah hal-hal yang paling penting untuk fokus sekarang...";
       }
       
       if (message.includes('difficult') || message.includes('hard') || message.includes('confused')) {
-        return "I understand this can be challenging! Let me break it down into smaller, more manageable pieces. Remember, everyone learns at their own pace, and it's okay to take time to fully grasp these concepts...";
+        return "Saya mengerti ini bisa menjadi sulit! Mari saya pecahkan menjadi bagian-bagian yang lebih kecil dan lebih mudah dikelola. Ingat, semua orang belajar dengan kecepatan mereka sendiri, dan itu baik untuk mengambil waktu untuk memahami konsep ini...";
       }
       
       if (message.includes('project') || message.includes('real world')) {
         if (isDataEngineer) {
-          return "For real-world projects, you'll often deal with messy data, changing requirements, and scale challenges. Here's what I'd recommend starting with to build practical experience...";
+          return "Untuk proyek nyata, Anda sering menangani data yang kotor, persyaratan yang berubah, dan tantangan skala. Berikut adalah apa yang saya sarankan untuk memulai untuk membangun pengalaman praktis...";
         } else if (isDataAnalyst) {
-          return "Real-world data analysis projects are exciting! You'll work with business stakeholders, create reports, and answer questions that drive decisions. Here's how to approach your first analysis project...";
+          return "Proyek analisis data nyata sangat menarik! Anda akan bekerja dengan pemangku kepentingan bisnis, membuat laporan, dan menjawab pertanyaan yang memacu keputusan. Berikut adalah cara untuk menangani proyek analisis Anda pertama...";
         } else {
-          return "Real-world data science projects are exciting! They often involve business stakeholders, messy data, and iterative analysis. Here's how to approach your first project...";
+          return "Proyek data science nyata sangat menarik! Mereka sering melibatkan pemangku kepentingan bisnis, data yang kotor, dan analisis iteratif. Berikut adalah cara untuk menangani proyek Anda pertama...";
         }
       }
       
       // Default responses
       const defaultResponses = [
-        "That's an insightful question! Based on what we're covering in this material, here's what I think would be most helpful for your learning...",
-        "I'm here to help you understand this better! Could you tell me which specific part you'd like me to elaborate on?",
-        "Great point! This relates directly to what we're learning. Let me connect this to the concepts in your current material...",
-        "I can see you're thinking critically about this topic. That's exactly the right approach for mastering these concepts!"
+        "Pertanyaan yang mendalam! Berdasarkan apa yang kita bahas dalam materi ini, berikut adalah apa yang saya pikirkan yang paling membantu untuk belajar Anda...",
+        "Saya di sini untuk membantu Anda memahami ini lebih baik! Dapatkah Anda memberitahu saya bagian mana yang ingin saya jelaskan lebih lanjut?",
+        "Bagus! Ini berhubungan langsung dengan apa yang kita pelajari. Mari saya sambungkan ini ke konsep dalam materi Anda saat ini...",
+        "Saya melihat Anda berpikir kritis tentang topik ini. Itu adalah pendekatan yang tepat untuk menguasai konsep ini!"
       ];
       
       return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
@@ -1295,7 +1295,7 @@ correlation_analysis(df, target_column='target_variable')`,
 
     function nextModule() {
       // This would be implemented to load the next learning module
-      alert('Next module functionality would be implemented here! For now, you can take the quiz to complete this module.');
+      alert('Fitur untuk memuat modul berikutnya akan diimplementasikan di sini! Untuk saat ini, Anda dapat mengambil kuis untuk menyelesaikan modul ini.');
     }
 
     // Auto-save progress periodically

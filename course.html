@@ -226,8 +226,8 @@
       <img src="image/Map.svg" alt="Map Path"/>
     </div>
     <div class="path-choice">
-        <h2>Pick Your Data Path</h2>
-        <p>Select the path that aligns with your career goals in the field of data.</p>
+        <h2>Pilih Jalur Belajar Anda</h2>
+        <p>Pilih jalur yang sesuai dengan tujuan karir Anda dalam bidang data.</p>
         <button onclick="selectPath('data_analyst')">Data Analyst</button>
         <button onclick="selectPath('data_engineer')">Data Engineer</button>
         <button onclick="selectPath('data_scientist')">Data Scientist</button>
@@ -237,21 +237,21 @@
   <!-- User Registration Section -->
   <div id="user-registration" class="main-container" style="display: none;">
     <div style="flex: 1; text-align: center;">
-      <h2>Welcome to Your Learning Journey!</h2>
-      <p>Let's get to know you better to personalize your experience.</p>
+      <h2>Selamat Datang di Perjalanan Belajar Anda!</h2>
+      <p>Mari kita kenal lebih dekat untuk mempersonalisasi pengalaman belajar Anda.</p>
       <br>
       <div style="max-width: 400px; margin: 0 auto;">
-        <label for="username"><strong>Your Name</strong></label><br>
-        <input type="text" id="username" placeholder="Enter your name" 
+        <label for="username"><strong>Nama Anda</strong></label><br>
+        <input type="text" id="username" placeholder="Masukkan nama Anda" 
                style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc;" />
         
         <div id="selected-path" style="margin: 20px 0; padding: 10px; background: #e6f1f8; border-radius: 5px;">
-          <strong>Selected Path: </strong><span id="path-display"></span>
+          <strong>Jalur yang Dipilih: </strong><span id="path-display"></span>
         </div>
         
         <button onclick="startAssessment()" 
                 style="padding: 12px 24px; background: #ffc107; border: 1px solid #000; font-weight: bold; border-radius: 6px; cursor: pointer;">
-          Start Assessment
+          Mulai Asesmen
         </button>
       </div>
     </div>
@@ -261,8 +261,8 @@
   <div id="loading-section" class="main-container" style="display: none;">
     <div class="loading">
       <div class="loading-spinner"></div>
-      <h3>Generating Your Personalized Assessment...</h3>
-      <p>Our AI is creating questions tailored to your chosen path.</p>
+      <h3>Membuat Personalisasi Asesmen Anda...</h3>
+      <p>AI kami membuat pertanyaan yang disesuaikan dengan jalur yang Anda pilih.</p>
     </div>
   </div>
 
@@ -279,11 +279,11 @@
     <div style="text-align: center; margin-top: 30px;">
       <button id="next-btn" onclick="nextQuestion()" 
               style="padding: 12px 24px; background: #ffc107; border: 1px solid #000; font-weight: bold; border-radius: 6px; cursor: pointer; display: none;">
-        Next Question
+        Pertanyaan Berikutnya
       </button>
       <button id="submit-btn" onclick="submitAssessment()" 
               style="padding: 12px 24px; background: #28a745; color: white; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; display: none;">
-        Submit Assessment
+        Kirim Asesmen
       </button>
     </div>
   </div>
@@ -291,14 +291,14 @@
   <!-- Results Section -->
   <div id="results-section" class="results-container">
     <div class="results-card">
-      <h2>Assessment Complete!</h2>
+      <h2>Asesmen Selesai!</h2>
       <div class="score-display" id="score-display">--</div>
-      <div class="level-badge" id="level-badge">Your Level</div>
+      <div class="level-badge" id="level-badge">Level Anda</div>
       <div id="recommendation-text" style="margin: 20px 0; font-size: 1.1rem;"></div>
       
       <button onclick="startLearning()" 
               style="padding: 15px 30px; background: #ffc107; border: 1px solid #000; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 1.1rem; margin-top: 20px;">
-        Start Learning Journey
+        Mulai Perjalanan Belajar
       </button>
     </div>
   </div>
@@ -309,7 +309,7 @@
     <div style="text-align: center;">
       <button onclick="location.reload()" 
               style="padding: 12px 24px; background: #ffc107; border: 1px solid #000; font-weight: bold; border-radius: 6px; cursor: pointer;">
-        Try Again
+        Coba Lagi
       </button>
     </div>
   </div>

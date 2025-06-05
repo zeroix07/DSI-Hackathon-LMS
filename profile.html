@@ -43,6 +43,8 @@
       max-width: 900px;
       margin: 0 auto;
     }
+    
+    /* Updated Profile Header Layout */
     .profile-header {
       display: flex;
       align-items: flex-start;
@@ -50,11 +52,14 @@
       margin-bottom: 40px;
       gap: 20px;
     }
+    
     .profile-info {
       display: flex;
       align-items: flex-start;
       flex: 1;
+      text-align: left;
     }
+    
     .profile-info img {
       width: 120px;
       height: 120px;
@@ -62,39 +67,51 @@
       margin-right: 25px;
       flex-shrink: 0;
     }
+    
     .profile-details {
       flex: 1;
       min-width: 0;
+      text-align: left;
     }
+    
     .profile-details h2 {
       font-size: 2rem;
       margin-bottom: 8px;
       color: #333;
+      text-align: left;
     }
+    
     .profile-tags {
       margin: 15px 0;
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      justify-content: flex-start;
     }
+    
     .profile-tags span {
       background: #eee;
       padding: 6px 12px;
       font-size: 0.85rem;
       border-radius: 15px;
     }
+    
     .profile-description {
       margin-top: 12px;
       color: #666;
       line-height: 1.5;
+      text-align: left;
     }
+    
     .profile-actions {
       display: flex;
       flex-direction: column;
       gap: 12px;
       width: 180px;
       flex-shrink: 0;
+      align-items: stretch;
     }
+    
     .profile-actions button {
       padding: 12px 16px;
       font-size: 1rem;
@@ -104,7 +121,9 @@
       width: 100%;
       font-weight: 500;
       transition: all 0.3s ease;
+      text-align: center;
     }
+    
     .edit-btn {
       background-color: #ffc107;
       color: black;
@@ -143,34 +162,36 @@
     @media (max-width: 768px) {
       .profile-header {
         flex-direction: column;
-        align-items: center;
-        text-align: center;
+        align-items: flex-start;
+        text-align: left;
       }
       
       .profile-info {
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         margin-bottom: 20px;
+        width: 100%;
       }
       
       .profile-info img {
         margin-right: 0;
         margin-bottom: 15px;
+        align-self: flex-start;
+      }
+      
+      .profile-details {
+        width: 100%;
+        text-align: left;
       }
       
       .profile-actions {
         width: 100%;
         max-width: 300px;
-        flex-direction: row;
-        justify-content: center;
-        gap: 10px;
-      }
-      
-      .continue-learning-btn {
-        flex: 1;
-        min-width: 0;
+        flex-direction: column;
+        align-items: stretch;
       }
     }
+    
     .progress-section {
       text-align: center;
       padding-top: 40px;
@@ -359,24 +380,6 @@
       margin-right: 15px;
       font-weight: bold;
     }
-    
-    .continue-learning-btn {
-      background: linear-gradient(135deg, #28a745, #20c997);
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      border-radius: 25px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin: 10px;
-    }
-    
-    .continue-learning-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
 
     .error-message {
       background: #ffebee;
@@ -406,16 +409,16 @@
   <div id="loading-section" class="profile-container" style="display: none;">
     <div class="loading">
       <div class="loading-spinner"></div>
-      <h3>Loading Your Profile...</h3>
-      <p>Fetching your latest learning progress and achievements.</p>
+      <h3>Memuat Profil Anda...</h3>
+      <p>Memproses Pencapaian Belajar Anda.</p>
     </div>
   </div>
 
   <!-- Error State -->
   <div id="error-section" class="profile-container" style="display: none;">
     <div class="error-message">
-      <h3>Unable to Load Profile</h3>
-      <p id="error-message">Please check your connection and try again.</p>
+      <h3>Tidak Dapat Memuat Profil</h3>
+      <p id="error-message">Silakan periksa koneksi Anda dan coba lagi.</p>
       <button onclick="loadProfile()" style="margin-top: 10px; padding: 10px 20px; background: #ffc107; border: none; border-radius: 5px; cursor: pointer;">
         Retry
       </button>
@@ -437,39 +440,39 @@
         </div>
       </div>
       <div class="profile-actions">
-        <button class="edit-btn" onclick="editProfile()">Edit Profile</button>
+        <button class="edit-btn" onclick="editProfile()">Edit Profil</button>
         <button class="view-btn" onclick="location.reload()">Refresh</button>
-        <button class="continue-learning-btn" onclick="continueLearning()">Continue Learning</button>
+        <button class="continue-learning-btn" onclick="continueLearning()">Lanjutkan Belajar</button>
       </div>
     </div>
 
     <!-- Enhanced Progress Section -->
     <div class="progress-section">
-      <h2>Your Learning Journey</h2>
-      <p id="progress-description">Track your progress and achievements in data science.</p>
+      <h2>Perjalanan Belajar Anda</h2>
+      <p id="progress-description">Pantau kemajuan dan pencapaian Anda dalam data science.</p>
       
       <!-- Progress Cards -->
       <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin: 30px 0;">
         <div class="progress-card" style="flex: 1; min-width: 200px;">
-          <h3>Overall Score</h3>
+          <h3>Skor Keseluruhan</h3>
           <div style="font-size: 2rem; font-weight: bold; color: #ffc107;" id="overall-score">--%</div>
-          <p>Last Assessment</p>
+          <p>Asesmen Terakhir</p>
         </div>
         <div class="progress-card" style="flex: 1; min-width: 200px;">
-          <h3>Completed Modules</h3>
+          <h3>Modul yang Telah Diselesaikan</h3>
           <div style="font-size: 2rem; font-weight: bold; color: #28a745;" id="completed-modules">--</div>
-          <p>Learning Materials</p>
+          <p>Materi Belajar</p>
         </div>
         <div class="progress-card" style="flex: 1; min-width: 200px;">
-          <h3>Skill Level</h3>
+          <h3>Level Keahlian</h3>
           <div style="font-size: 1.5rem; font-weight: bold; color: #6b8ed6;" id="skill-level">--</div>
-          <p>Current Proficiency</p>
+          <p>Keahlian Saat Ini</p>
         </div>
       </div>
 
       <!-- Achievements Section -->
       <div id="achievements-section" style="margin: 30px 0;">
-        <h3>🏆 Achievements</h3>
+        <h3>🏆 Pencapaian</h3>
         <div id="achievements-container" style="margin: 15px 0;">
           <!-- Dynamic achievements will be inserted here -->
         </div>
@@ -477,14 +480,14 @@
 
       <!-- Recent Activity -->
       <div id="recent-activity-section" class="recent-activity" style="text-align: left;">
-        <h3>📈 Recent Activity</h3>
+        <h3>📈 Aktivitas Terbaru</h3>
         <div id="activity-container">
           <!-- Dynamic activity will be inserted here -->
         </div>
       </div>
 
       <button onclick="showDetailedStats()" style="padding: 12px 24px; background: #ffc107; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px;">
-        View Detailed Analytics
+        Lihat Analisis Lengkap Pencapaian
       </button>
     </div>
   </div>
@@ -492,12 +495,12 @@
   <!-- Enhanced Stats Popup -->
   <div class="stats-popup" id="statsPopup">
     <div class="stats-content">
-      <h2>📊 Your Detailed Analytics</h2>
-      <p>Comprehensive breakdown of your learning performance and skill development.</p>
+      <h2>📊 Analisis Lengkap Pencapaian</h2>
+      <p>Detail kemajuan belajar dan perkembangan keahlian Anda.</p>
       
       <!-- Dynamic Skill Chart -->
       <div id="skills-chart-container">
-        <h3>Current Skill Levels</h3>
+        <h3>Level Keahlian Saat Ini</h3>
         <div id="skills-chart" style="margin: 20px 0;">
           <!-- Dynamic skill meters will be inserted here -->
         </div>
@@ -510,13 +513,13 @@
       
       <!-- Recommendations -->
       <div id="recommendations-section" style="text-align: left; margin: 20px 0; background: #f9f9f9; padding: 15px; border-radius: 8px;">
-        <h4>🎯 AI Recommendations</h4>
+        <h4>🎯 Rekomendasi AI</h4>
         <div id="recommendations-list">
           <!-- Dynamic recommendations will be inserted here -->
         </div>
       </div>
       
-      <button class="close-btn" onclick="closeStats()">Close Analytics</button>
+      <button class="close-btn" onclick="closeStats()">Tutup Analisis</button>
     </div>
   </div>
 
@@ -698,8 +701,8 @@
 
       // Update progress description
       const progressDesc = user.specialization === 'data_engineer' 
-        ? 'Track your progress in data engineering and infrastructure skills.'
-        : 'Track your progress in data science and machine learning.';
+        ? 'Pantau kemajuan Anda dalam data engineering dan keterampilan infrastruktur.'
+        : 'Pantau kemajuan Anda dalam data science dan machine learning.';
       document.getElementById('progress-description').textContent = progressDesc;
 
       // Display recent activity
@@ -714,7 +717,7 @@
       const container = document.getElementById('activity-container');
       
       if (activities.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No recent activity. Start learning to see your progress here!</p>';
+        container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Tidak ada aktivitas terbaru. Mulai belajar untuk melihat kemajuan Anda di sini!</p>';
         return;
       }
 
@@ -751,7 +754,7 @@
       const container = document.getElementById('achievements-container');
       
       if (achievements.length === 0) {
-        container.innerHTML = '<p style="color: #666;">Complete assessments and learning modules to earn achievements!</p>';
+        container.innerHTML = '<p style="color: #666;">Selesaikan asesmen dan modul belajar untuk mendapatkan pencapaian!</p>';
         return;
       }
 

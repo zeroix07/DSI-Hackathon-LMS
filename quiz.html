@@ -379,12 +379,12 @@
   <header>
     <div class="header-content">
       <div class="logo-section">
-        <img src="logo.png" alt="Logo">
+        <img src="image/logo.svg" alt="Logo">
         <strong>AI Education System</strong>
       </div>
       <div class="quiz-info">
-        <h1>📝 Knowledge Assessment</h1>
-        <p id="quiz-subtitle">Test your understanding</p>
+        <h1>📝 Penilaian Pengetahuan</h1>
+        <p id="quiz-subtitle">Tes pemahaman Anda</p>
       </div>
       <div id="user-info">
         <span id="user-name">Learner</span>
@@ -397,8 +397,8 @@
     <div class="quiz-card">
       <div class="loading">
         <div class="loading-spinner"></div>
-        <h3>Generating Your Personalized Quiz...</h3>
-        <p>Our AI is creating questions based on your learning material and skill level.</p>
+        <h3>Membuat Kuis Personalisasi Anda...</h3>
+        <p>AI kami membuat pertanyaan berdasarkan materi belajar dan tingkat keterampilan Anda.</p>
       </div>
     </div>
   </div>
@@ -407,29 +407,29 @@
   <div id="quiz-container" class="container">
     <!-- Quiz Header -->
     <div class="quiz-header">
-      <h2 id="quiz-title">Knowledge Assessment</h2>
-      <p id="quiz-description">Demonstrate your understanding of the material</p>
+      <h2 id="quiz-title">Penilaian Pengetahuan</h2>
+      <p id="quiz-description">Demonstrasikan pemahaman Anda tentang materi</p>
       
       <div class="progress-container">
         <div class="quiz-stats">
           <div class="stat-item">
             <div class="stat-number" id="current-question">1</div>
-            <div class="stat-label">Current</div>
+            <div class="stat-label">Saat Ini</div>
           </div>
           <div class="stat-item">
             <div class="stat-number" id="total-questions">10</div>
-            <div class="stat-label">Total</div>
+            <div class="stat-label">Total Pertanyaan</div>
           </div>
           <div class="stat-item">
             <div class="stat-number" id="max-score">100</div>
-            <div class="stat-label">Max Score</div>
+            <div class="stat-label">Skor Maksimal</div>
           </div>
         </div>
         
         <div class="progress-bar">
           <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
         </div>
-        <p id="progress-text">Question 1 of 10</p>
+        <p id="progress-text">Pertanyaan 1 dari 10</p>
       </div>
     </div>
 
@@ -441,18 +441,18 @@
     <!-- Action Buttons -->
     <div class="action-buttons">
       <button class="btn btn-secondary" onclick="goBack()">
-        ← Back to Learning
+        ← Kembali ke Pembelajaran
       </button>
       
       <div style="display: flex; gap: 15px;">
         <button id="prev-btn" class="btn btn-secondary" onclick="previousQuestion()" disabled>
-          ← Previous
+          ← Sebelumnya
         </button>
         <button id="next-btn" class="btn btn-primary" onclick="nextQuestion()" disabled>
-          Next →
+          Selanjutnya →
         </button>
         <button id="submit-btn" class="btn btn-success" onclick="submitQuiz()" style="display: none;">
-          Submit Quiz
+          Submit Kuis
         </button>
       </div>
     </div>
@@ -462,10 +462,10 @@
   <div id="error-section" class="container" style="display: none;">
     <div class="quiz-card">
       <div class="error-message">
-        <h3>Unable to Load Quiz</h3>
-        <p id="error-message">Please try again or contact support.</p>
+        <h3>Tidak dapat Memuat Kuis</h3>
+        <p id="error-message">Silakan coba lagi atau hubungi dukungan.</p>
         <button class="btn btn-primary" onclick="loadQuiz()" style="margin-top: 15px;">
-          Retry
+          Coba Lagi
         </button>
       </div>
     </div>
@@ -539,20 +539,20 @@
           multiple_choice: [
             {
               id: 1,
-              question: "What is the primary purpose of an ETL pipeline?",
+              question: "Apa tujuan utama dari pipeline ETL?",
               options: [
-                "To extract, transform, and load data for analysis",
-                "To create data visualizations",
-                "To train machine learning models",
-                "To write documentation"
+                "Untuk mengekstrak, mengubah, dan memuat data untuk analisis",
+                "Untuk membuat visualisasi data",
+                "Untuk melatih model pembelajaran mesin",
+                "Untuk menulis dokumentasi"
               ]
             },
             {
               id: 2,
-              question: "Which database type is most suitable for analytical workloads?",
+              question: "Jenis database yang paling cocok untuk beban kerja analitik?",
               options: [
                 "OLTP (Online Transaction Processing)",
-                "OLAP (Online Analytical Processing)", 
+                "OLAP (Online Analytical Processing)",
                 "NoSQL Document Store",
                 "Key-Value Store"
               ]
@@ -561,26 +561,26 @@
           practical_questions: [
             {
               id: 3,
-              question: "Your data pipeline is experiencing memory issues when processing large files. What's the best approach?",
-              scenario: "You have a pipeline that processes 10GB CSV files daily, but it's running out of memory on a 16GB machine.",
+              question: "Pipeline data Anda mengalami masalah memori saat memproses file besar. Apa pendekatan terbaik?",
+              scenario: "Anda memiliki pipeline yang memproses file CSV 10GB setiap hari, tetapi memori pada mesin 16GB sudah habis.",
               options: [
-                "Increase the machine's RAM to 64GB",
-                "Process the file in smaller chunks using streaming",
-                "Convert all files to a different format first",
-                "Run the pipeline during off-peak hours only"
+                "Tingkatkan RAM mesin menjadi 64GB",
+                "Proses file dalam potongan kecil menggunakan streaming",
+                "Ubah semua file ke format yang berbeda terlebih dahulu",
+                "Jalankan pipeline hanya selama jam tidak sibuk"
               ]
             }
           ],
           coding_challenge: {
             id: 4,
-            problem_description: "Create a simple data validation function that checks if a pandas DataFrame meets basic quality criteria.",
+            problem_description: "Buat fungsi validasi data sederhana yang memeriksa apakah DataFrame pandas memenuhi kriteria kualitas dasar.",
             requirements: [
-              "Check for null values in critical columns",
-              "Verify data types are correct",
-              "Return a validation report"
+              "Periksa nilai kosong di kolom kritis",
+              "Verifikasi tipe data sudah benar",
+              "Kembalikan laporan validasi"
             ],
             sample_input: "df = pd.DataFrame({'id': [1, 2, None], 'name': ['Alice', 'Bob', 'Charlie']})",
-            sample_output: "{'null_ids': 1, 'total_records': 3, 'is_valid': False}"
+            sample_output: "{'null_ids': 1, 'total_records': 3, 'is_valid': False}" 
           }
         };
       } else {
@@ -590,45 +590,45 @@
           multiple_choice: [
             {
               id: 1,
-              question: "What is the main purpose of exploratory data analysis (EDA)?",
+              question: "Apa tujuan utama dari analisis data eksploratori (EDA)?",
               options: [
-                "To build predictive models immediately",
-                "To understand data patterns and quality before modeling",
-                "To deploy models to production",
-                "To write final reports"
+                "Untuk membangun model prediksi secara langsung",
+                "Untuk memahami pola dan kualitas data sebelum pemodelan",
+                "Untuk mengimplementasikan model ke produksi",
+                "Untuk menulis laporan akhir"
               ]
             },
             {
               id: 2,
-              question: "Which measure of central tendency is most affected by outliers?",
+              question: "Metrik tendensi sentral yang paling terpengaruh oleh outlier?",
               options: [
                 "Mean",
                 "Median", 
                 "Mode",
-                "All are equally affected"
+                "Semua sama terpengaruh"
               ]
             }
           ],
           practical_questions: [
             {
               id: 3,
-              question: "You notice that your model performs well on training data but poorly on test data. What's the most likely issue?",
-              scenario: "Your random forest model achieves 95% accuracy on training data but only 65% on test data.",
+              question: "Anda melihat bahwa model Anda berfungsi baik pada data latihan tetapi buruk pada data tes. Apa masalah yang paling mungkin?",
+              scenario: "Model random forest Anda mencapai 95% akurasi pada data latihan tetapi hanya 65% pada data tes.",
               options: [
-                "The model is underfitting",
-                "The model is overfitting",
-                "The data has poor quality",
-                "The features are not relevant"
+                "Model underfitting",
+                "Model overfitting",
+                "Data memiliki kualitas buruk",
+                "Fitur tidak relevan"
               ]
             }
           ],
           coding_challenge: {
             id: 4,
-            problem_description: "Write a function to calculate basic statistical measures for a numerical column.",
+            problem_description: "Buat fungsi untuk menghitung ukuran statistik dasar untuk kolom numerik.",
             requirements: [
-              "Calculate mean, median, and standard deviation",
-              "Handle missing values appropriately",
-              "Return results as a dictionary"
+              "Hitung mean, median, dan standar deviasi",
+              "Mengatasi nilai kosong dengan tepat",
+              "Kembalikan hasil sebagai dictionary"
             ],
             sample_input: "data = [1, 2, 3, 4, 5, None, 7, 8, 9, 10]",
             sample_output: "{'mean': 5.44, 'median': 5.5, 'std': 3.17, 'missing_count': 1}"
@@ -893,7 +893,7 @@
 
     // Submit quiz
     async function submitQuiz() {
-      if (!confirm('Are you sure you want to submit your quiz? You cannot change your answers after submission.')) {
+      if (!confirm('Apakah Anda yakin ingin mengirim kuis Anda? Anda tidak dapat mengubah jawaban setelah pengiriman.')) {
         return;
       }
       
@@ -948,7 +948,7 @@
         percentage: score,
         performance: performance,
         passed: score >= 60,
-        overall_feedback: `You scored ${score}% on this assessment. ${score >= 70 ? 'Great work!' : 'Keep practicing to improve your understanding.'}`,
+        overall_feedback: `Anda mendapatkan skor ${score}% pada penilaian ini. ${score >= 70 ? 'Bagus!' : 'Terus berlatih untuk meningkatkan pemahaman Anda.'}`,
         breakdown: {
           multiple_choice: {
             score: Math.round(score * 0.4),
@@ -1032,7 +1032,7 @@
     // Auto-save progress
     setInterval(() => {
       if (userAnswers.some(answer => answer !== null)) {
-        console.log('Auto-saving quiz progress...');
+        console.log('Menyimpan kemajuan kuis...');
         // In a real application, save progress to backend
       }
     }, 30000);
