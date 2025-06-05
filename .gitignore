@@ -4,6 +4,9 @@ __pycache__/
 *$py.class
 *.so
 .Python
+
+# Virtual Environment
+.venv/
 env/
 venv/
 ENV/
@@ -38,6 +41,4 @@ Thumbs.db
 
 # Temporary files
 temp/
-tmp/.venv/
-.DS_Store
-__pycache__/
+tmp/
