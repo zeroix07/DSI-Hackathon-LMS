@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Optional
 import os
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
+from groq import Groq
 from tavily import TavilyClient
 import json
 import uuid
@@ -12,8 +11,6 @@ from datetime import datetime
 import uvicorn
 import uuid
 from dotenv import load_dotenv
-import re
-
 # Load API keys from .env file
 load_dotenv()
 
@@ -29,65 +26,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Get API keys
-HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
-# Initialize Hugging Face model
-MODEL_NAME = "Sahabat-AI/Llama-Sahabat-AI-v2-70B-IT"
-
-# Global variables for model and tokenizer
-tokenizer = None
-model = None
-device = None
-
-def initialize_model():
-    """Initialize the Hugging Face model and tokenizer"""
-    global tokenizer, model, device
-    
-    try:
-        print("Initializing Hugging Face model...")
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print(f"Using device: {device}")
-        
-        tokenizer = AutoTokenizer.from_pretrained(
-            MODEL_NAME,
-            token=HUGGINGFACE_API_KEY,
-            trust_remote_code=True
-        )
-        
-        if tokenizer.pad_token is None:
-            tokenizer.pad_token = tokenizer.eos_token
-        
-        model = AutoModelForCausalLM.from_pretrained(
-            MODEL_NAME,
-            token=HUGGINGFACE_API_KEY,
-            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-            device_map="auto" if torch.cuda.is_available() else None,
-            trust_remote_code=True,
-            low_cpu_mem_usage=True
-        )
-        
-        if not torch.cuda.is_available():
-            model = model.to(device)
-        
-        model.eval()
-        print("Model initialized successfully!")
-        return True
-        
-    except Exception as e:
-        print(f"Error initializing model: {e}")
-        print("Falling back to API-based approach...")
-        return False
-
-# Initialize Tavily client
-tavily_client = TavilyClient(api_key=TAVILY_API_KEY) if TAVILY_API_KEY else None
+# Initialize clients
+groq_client = Groq(api_key=GROQ_API_KEY)
+tavily_client = TavilyClient(api_key=TAVILY_API_KEY)
 
 # Pydantic models
 class User(BaseModel):
     username: str
-    specialization: str
-    level: Optional[str] = None
+    specialization: str  # "data_engineer" or "data_scientist"
+    level: Optional[str] = None  # Will be determined by assessment
 
 class AssessmentAnswer(BaseModel):
     question_id: int
@@ -100,7 +50,7 @@ class AssessmentSubmission(BaseModel):
 class QuizSubmission(BaseModel):
     user_id: str
     material_id: str
-    answers: List[Dict[str, str]]
+    answers: List[Dict[str, str]]  # [{"question_id": "1", "answer": "A"}]
     coding_answer: Optional[str] = None
 
 class ChatMessage(BaseModel):
@@ -108,91 +58,20 @@ class ChatMessage(BaseModel):
     material_id: str
     message: str
 
-# In-memory storage
+# In-memory storage (in production, use database)
 users_db = {}
 materials_db = {}
 assessments_db = {}
 quiz_results_db = {}
 
 class EducationAgent:
-    def __init__(self, tavily_client):
+    def __init__(self, groq_client, tavily_client):
+        self.groq = groq_client
         self.tavily = tavily_client
-        self.model_name = MODEL_NAME
-        
-    def generate_text(self, prompt: str, max_length: int = 2048, temperature: float = 0.1) -> str:
-        """Generate text using the Hugging Face model (replaces groq.chat.completions.create)"""
-        global tokenizer, model, device
-        
-        try:
-            if model is None or tokenizer is None:
-                return self._generate_with_api(prompt, max_length, temperature)
-            
-            # Format as chat message
-            messages = [{"role": "user", "content": prompt}]
-            
-            # Apply chat template
-            formatted_prompt = tokenizer.apply_chat_template(
-                messages, 
-                tokenize=False, 
-                add_generation_prompt=True
-            )
-            
-            inputs = tokenizer.encode(formatted_prompt, return_tensors="pt").to(device)
-            
-            with torch.no_grad():
-                outputs = model.generate(
-                    inputs,
-                    max_new_tokens=max_length,
-                    temperature=temperature,
-                    do_sample=True if temperature > 0 else False,
-                    pad_token_id=tokenizer.eos_token_id,
-                    eos_token_id=tokenizer.eos_token_id,
-                    repetition_penalty=1.1
-                )
-            
-            response = tokenizer.decode(outputs[0][inputs.shape[1]:], skip_special_tokens=True)
-            return response.strip()
-            
-        except Exception as e:
-            print(f"Error generating text with local model: {e}")
-            return self._generate_with_api(prompt, max_length, temperature)
-    
-    def _generate_with_api(self, prompt: str, max_length: int = 2048, temperature: float = 0.1) -> str:
-        """Fallback: Generate text using Hugging Face Inference API"""
-        try:
-            import requests
-            
-            headers = {"Content-Type": "application/json"}
-            if HUGGINGFACE_API_KEY:
-                headers["Authorization"] = f"Bearer {HUGGINGFACE_API_KEY}"
-            
-            api_url = f"https://api-inference.huggingface.co/models/{MODEL_NAME}"
-            
-            payload = {
-                "inputs": prompt,
-                "parameters": {
-                    "max_new_tokens": max_length,
-                    "temperature": temperature,
-                    "return_full_text": False
-                }
-            }
-            
-            response = requests.post(api_url, headers=headers, json=payload)
-            
-            if response.status_code == 200:
-                result = response.json()
-                if isinstance(result, list) and len(result) > 0:
-                    return result[0].get("generated_text", "").strip()
-                return str(result).strip()
-            else:
-                raise Exception(f"API request failed: {response.status_code}")
-                
-        except Exception as e:
-            print(f"Error with API fallback: {e}")
-            raise Exception("Both local model and API failed")
+        self.model = "llama-3.3-70b-versatile"
 
     def generate_assessment_questions(self, specialization: str) -> Dict:
-        """Generate assessment questions - SAME LOGIC, just replace groq call"""
+        """Generate assessment questions to determine user level using AI"""
         
         spec_topics = {
             "data_engineer": {
@@ -250,20 +129,24 @@ class EducationAgent:
         """
         
         try:
-            # REPLACED: self.groq.chat.completions.create() with self.generate_text()
-            response_content = self.generate_text(prompt, max_length=1500, temperature=0.1)
+            response = self.groq.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model=self.model,
+                temperature=0.1  # Very low temperature for consistency
+            )
             
-            print(f"Raw response: {response_content}")
+            content = response.choices[0].message.content.strip()
+            print(f"Raw response: {content}")
             
-            # Extract JSON from response - SAME LOGIC
-            start_idx = response_content.find('{')
-            end_idx = response_content.rfind('}') + 1
+            # Extract JSON from response
+            start_idx = content.find('{')
+            end_idx = content.rfind('}') + 1
             
             if start_idx != -1 and end_idx > start_idx:
-                json_content = response_content[start_idx:end_idx]
+                json_content = content[start_idx:end_idx]
                 result = json.loads(json_content)
                 
-                # Validate and normalize difficulty levels - SAME LOGIC
+                # Validate and normalize difficulty levels
                 for question in result.get('questions', []):
                     difficulty = question.get('difficulty', '').lower()
                     if difficulty in ['beginner', 'basic', 'dasar']:
@@ -273,7 +156,7 @@ class EducationAgent:
                     elif difficulty in ['advanced', 'expert', 'lanjut', 'lanjutan']:
                         question['difficulty'] = 'mahir'
                     elif difficulty not in ['pemula', 'menengah', 'mahir']:
-                        question['difficulty'] = 'pemula'
+                        question['difficulty'] = 'pemula'  # Default fallback
                 
                 return result
             else:
@@ -288,7 +171,7 @@ class EducationAgent:
             raise HTTPException(status_code=500, detail="Failed to generate assessment questions")
         
     def evaluate_assessment(self, answers: List[AssessmentAnswer], questions: List[Dict]) -> Dict:
-        """Evaluate assessment - EXACT SAME LOGIC"""
+        """Evaluate assessment and determine user level using AI"""
         
         # Calculate score by difficulty
         score_by_level = {"pemula": 0, "menengah": 0, "mahir": 0}
@@ -336,7 +219,7 @@ class EducationAgent:
         }
     
     def _get_level_recommendation(self, level: str, score: float) -> str:
-        """Helper method - SAME LOGIC"""
+        """Helper method to generate level recommendation"""
         recommendations = {
             "pemula": f"Anda berada di level pemula dengan skor {score}%. Fokus pada konsep dasar dan fundamental.",
             "menengah": f"Anda berada di level menengah dengan skor {score}%. Perdalam implementasi dan best practices.",
@@ -344,159 +227,183 @@ class EducationAgent:
         }
         return recommendations.get(level, "Terus belajar dan berkembang!")
         
-    def search_and_create_personalized_material(self, specialization: str, level: str, user_id: str) -> Dict:
-        """Create personalized learning material - SAME LOGIC, just replace groq call"""
-        
-        try:
-            print(f"Starting material creation for user: {user_id}, spec: {specialization}, level: {level}")
-            
-            # Define learning path - SAME LOGIC
-            learning_paths = {
-                "data_engineer": {
-                    "pemula": ["Dasar SQL", "Python untuk Data", "ETL Dasar", "Dasar Pemodelan Data"],
-                    "menengah": ["ETL Lanjutan", "Data Warehousing", "Apache Kafka", "Layanan Data Cloud"],
-                    "mahir": ["Streaming Data Real-time", "Optimasi Pipeline Data", "Sistem Terdistribusi", "Tata Kelola Data"]
-                },
-                "data_scientist": {
-                    "pemula": ["Dasar Statistik", "Python untuk Data Science", "Visualisasi Data", "Machine Learning Dasar"],
-                    "menengah": ["Algoritma ML Lanjutan", "Feature Engineering", "Evaluasi Model", "Dasar Deep Learning"],
-                    "mahir": ["Deep Learning Lanjutan", "MLOps", "Analisis Time Series", "Statistik Lanjutan"]
-                },
-                "data_analyst": {
-                    "pemula": ["Dasar SQL", "Keahlian Excel", "Visualisasi Dasar", "Dasar Pembersihan Data"],
-                    "menengah": ["Tools BI Lanjutan", "Analisis Statistik", "Desain Dashboard", "Business Intelligence"],
-                    "mahir": ["Analitik Lanjutan", "Pemodelan Prediktif", "Strategi Bisnis", "Pengambilan Keputusan Berbasis Data"]
-                }
-            }
-            
-            if specialization not in learning_paths:
-                raise ValueError(f"Invalid specialization: {specialization}")
-            
-            if level not in learning_paths[specialization]:
-                raise ValueError(f"Invalid level: {level} for specialization: {specialization}")
-            
-            topics = learning_paths[specialization][level]
-            current_topic = topics[0]
-            
-            print(f"Current topic: {current_topic}")
-            
-            content_sources = []
-            
-            spec_name = "Data Engineering" if specialization == "data_engineer" else "Data Science" if specialization == "data_scientist" else "Data Analyst" if specialization == "data_analysis" else "umum"
-
-            prompt = f"""
-                    kamu adalah seorang pembuat materi profesional {current_topic} untuk {spec_name} di level {level} yang telah berkecimpung selama 10 tahun
-            
-                    Buatlah materi pembelajaran dalam format JSON untuk topik {spec_name}: {current_topic} di level {level}.
+    def _get_level_recommendation(self, level: str, score: float) -> str:
+        recommendations = {
+            "pemula": f"Anda berada di level pemula dengan skor {score}%. Fokus pada pemahaman konsep dasar dan praktik hands-on.",
+            "menengah": f"Anda berada di level menengah dengan skor {score}%. Tingkatkan kemampuan dengan project yang lebih kompleks.",
+            "mahir": f"Anda berada di level mahir dengan skor {score}%. Fokus pada optimisasi dan arsitektur advanced."
+        }
+        return recommendations.get(level, "Terus semangat belajar!")
     
-                    Kembalikan hanya JSON yang valid dengan struktur ini:
-                    {{
-                        "title": "{current_topic} untuk {spec_name}",
-                        "subtitle": "Pelajari {current_topic} langkah demi langkah",
-                        "introduction": "Pengenalan terhadap {current_topic}",
-                        "learning_objectives": [
-                            "Memahami konsep {current_topic}",
-                            "Menerapkan {current_topic} dalam praktik"
-                        ],
-                        "prerequisites": [
-                            "Pengetahuan dasar pemrograman"
-                        ],
-                        "content": {{
-                            "theory": {{
-                                "overview": "Gambaran umum tentang {current_topic}",
-                                "key_concepts": [
-                                    "Konsep kunci 1",
-                                    "Konsep kunci 2"
+    def search_and_create_personalized_material(self, specialization: str, level: str, user_id: str) -> Dict:
+            """Create personalized learning material using AI and web search"""
+            
+            try:
+                print(f"Starting material creation for user: {user_id}, spec: {specialization}, level: {level}")
+                
+                # Define learning path based on specialization and level
+                learning_paths = {
+                    "data_engineer": {
+                        "pemula": ["Dasar SQL", "Python untuk Data", "ETL Dasar", "Dasar Pemodelan Data"],
+                        "menengah": ["ETL Lanjutan", "Data Warehousing", "Apache Kafka", "Layanan Data Cloud"],
+                        "mahir": ["Streaming Data Real-time", "Optimasi Pipeline Data", "Sistem Terdistribusi", "Tata Kelola Data"]
+                    },
+                    "data_scientist": {
+                        "pemula": ["Dasar Statistik", "Python untuk Data Science", "Visualisasi Data", "Machine Learning Dasar"],
+                        "menengah": ["Algoritma ML Lanjutan", "Feature Engineering", "Evaluasi Model", "Dasar Deep Learning"],
+                        "mahir": ["Deep Learning Lanjutan", "MLOps", "Analisis Time Series", "Statistik Lanjutan"]
+                    },
+                    "data_analyst": {
+                        "pemula": ["Dasar SQL", "Keahlian Excel", "Visualisasi Dasar", "Dasar Pembersihan Data"],
+                        "menengah": ["Tools BI Lanjutan", "Analisis Statistik", "Desain Dashboard", "Business Intelligence"],
+                        "mahir": ["Analitik Lanjutan", "Pemodelan Prediktif", "Strategi Bisnis", "Pengambilan Keputusan Berbasis Data"]
+                    }
+                }
+                # Validate inputs
+                if specialization not in learning_paths:
+                    raise ValueError(f"Invalid specialization: {specialization}")
+                
+                if level not in learning_paths[specialization]:
+                    raise ValueError(f"Invalid level: {level} for specialization: {specialization}")
+                
+                topics = learning_paths[specialization][level]
+                current_topic = topics[0]
+                
+                print(f"Current topic: {current_topic}")
+                
+                # Skip search for now to isolate the issue
+                content_sources = []
+                
+                # Generate material with a very simple prompt
+                spec_name = "Data Engineering" if specialization == "data_engineer" else "Data Science" if specialization == "data_scientist" else "Data Analyst" if specialization == "data_analysis" else "umum"
+    
+                prompt = f"""
+                        kamu adalah seorang pembuat materi profesional {current_topic} untuk {spec_name} di level {level} yang telah berkecimpung selama 10 tahun
+                
+                        Buatlah materi pembelajaran dalam format JSON untuk topik {spec_name}: {current_topic} di level {level}.
+        
+                        Kembalikan hanya JSON yang valid dengan struktur ini:
+                        {{
+                            "title": "{current_topic} untuk {spec_name}",
+                            "subtitle": "Pelajari {current_topic} langkah demi langkah",
+                            "introduction": "Pengenalan terhadap {current_topic}",
+                            "learning_objectives": [
+                                "Memahami konsep {current_topic}",
+                                "Menerapkan {current_topic} dalam praktik"
+                            ],
+                            "prerequisites": [
+                                "Pengetahuan dasar pemrograman"
+                            ],
+                            "content": {{
+                                "theory": {{
+                                    "overview": "Gambaran umum tentang {current_topic}",
+                                    "key_concepts": [
+                                        "Konsep kunci 1",
+                                        "Konsep kunci 2"
+                                    ]
+                                }},
+                                "practical_examples": [
+                                    {{
+                                        "title": "Contoh Dasar",
+                                        "description": "Contoh sederhana dari {current_topic}",
+                                        "code_snippet": "# Contoh kode di sini",
+                                        "explanation": "Contoh ini menunjukkan penggunaan dasar"
+                                    }}
+                                ],
+                                "best_practices": [
+                                    "Ikuti standar industri",
+                                    "Jaga kode tetap bersih dan terdokumentasi"
                                 ]
                             }},
-                            "practical_examples": [
-                                {{
-                                    "title": "Contoh Dasar",
-                                    "description": "Contoh sederhana dari {current_topic}",
-                                    "code_snippet": "# Contoh kode di sini",
-                                    "explanation": "Contoh ini menunjukkan penggunaan dasar"
-                                }}
-                            ],
-                            "best_practices": [
-                                "Ikuti standar industri",
-                                "Jaga kode tetap bersih dan terdokumentasi"
-                            ]
-                        }},
-                        "estimated_duration": "2-3 jam"
-                    }}
-                    
-                    Kembalikan HANYA JSON, tanpa teks lain."""
-            
-            print("Sending request to AI...")
-            
-            try:
-                # REPLACED: self.groq.chat.completions.create() with self.generate_text()
-                response_content = self.generate_text(prompt, max_length=1500, temperature=0.1)
-                
-                if not response_content:
-                    raise ValueError("Empty content from AI response")
+                            "estimated_duration": "2-3 jam"
+                        }}
                         
-                print(f"AI response length: {len(response_content)}")
-                print(f"AI response first 100 chars: {response_content[:100]}")
+                        Kembalikan HANYA JSON, tanpa teks lain."""
                 
-            except Exception as ai_error:
-                print(f"AI generation error: {ai_error}")
-                return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
-            
-            # Clean up the content - SAME LOGIC
-            if response_content.startswith('```json'):
-                response_content = response_content[7:]
-                if response_content.endswith('```'):
-                    response_content = response_content[:-3]
-            elif response_content.startswith('```'):
-                response_content = response_content[3:]
-                if response_content.endswith('```'):
-                    response_content = response_content[:-3]
-            
-            response_content = response_content.strip()
-            
-            if not response_content:
-                print("Content is empty after cleanup")
-                return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
-            
-            print("Attempting to parse JSON...")
-            
-            try:
-                material = json.loads(response_content)
-                print("JSON parsing successful")
-            except json.JSONDecodeError as json_error:
-                print(f"JSON parsing error: {json_error}")
-                print(f"Content that failed to parse: {repr(response_content)}")
-                return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
-            
-            # Add metadata - SAME LOGIC
-            material.update({
-                "id": str(uuid.uuid4()),
-                "specialization": specialization,
-                "level": level,
-                "user_id": user_id,
-                "sources": content_sources,
-                "created_at": datetime.now().isoformat(),
-                "current_topic_index": 0,
-                "total_topics": len(topics),
-                "learning_path": topics
-            })
-            
-            print(f"Material created successfully with ID: {material['id']}")
-            return material
-            
-        except Exception as e:
-            print(f"Unexpected error in material creation: {e}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            
-            try:
-                return self._create_fallback_material(specialization, level, topics[0] if 'topics' in locals() else "Topik Dasar", topics if 'topics' in locals() else ["Topik Dasar"], user_id)
-            except:
-                raise HTTPException(status_code=500, detail=f"Gagal membuat materi pembelajaran: {str(e)}")
+                print("Sending request to AI...")
+                
+                try:
+                    response = self.groq.chat.completions.create(
+                        messages=[{"role": "user", "content": prompt}],
+                        model=self.model,
+                        temperature=0.1,
+                        max_tokens=1500
+                    )
+                    
+                    if not response or not response.choices:
+                        raise ValueError("Empty response from AI")
+                    
+                    content = response.choices[0].message.content
+                    
+                    if not content:
+                        raise ValueError("Empty content from AI response")
+                        
+                    content = content.strip()
+                    print(f"AI response length: {len(content)}")
+                    print(f"AI response first 100 chars: {content[:100]}")
+                    
+                except Exception as ai_error:
+                    print(f"AI generation error: {ai_error}")
+                    # Use fallback material instead of failing
+                    return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
+                
+                # Clean up the content
+                if content.startswith('```json'):
+                    content = content[7:]
+                    if content.endswith('```'):
+                        content = content[:-3]
+                elif content.startswith('```'):
+                    content = content[3:]
+                    if content.endswith('```'):
+                        content = content[:-3]
+                
+                content = content.strip()
+                
+                if not content:
+                    print("Content is empty after cleanup")
+                    return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
+                
+                print("Attempting to parse JSON...")
+                
+                try:
+                    material = json.loads(content)
+                    print("JSON parsing successful")
+                except json.JSONDecodeError as json_error:
+                    print(f"JSON parsing error: {json_error}")
+                    print(f"Content that failed to parse: {repr(content)}")
+                    return self._create_fallback_material(specialization, level, current_topic, topics, user_id)
+                
+                # Add metadata
+    
+                
+                material.update({
+                    "id": str(uuid.uuid4()),
+                    "specialization": specialization,
+                    "level": level,
+                    "user_id": user_id,
+                    "sources": content_sources,
+                    "created_at": datetime.now().isoformat(),
+                    "current_topic_index": 0,
+                    "total_topics": len(topics),
+                    "learning_path": topics
+                })
+                
+                print(f"Material created successfully with ID: {material['id']}")
+                return material
+                
+            except Exception as e:
+                print(f"Unexpected error in material creation: {e}")
+                import traceback
+                print(f"Traceback: {traceback.format_exc()}")
+                
+                # Return fallback material instead of raising exception
+                try:
+                    return self._create_fallback_material(specialization, level, topics[0] if 'topics' in locals() else "Topik Dasar", topics if 'topics' in locals() else ["Topik Dasar"], user_id)
+                except:
+                    raise HTTPException(status_code=500, detail=f"Gagal membuat materi pembelajaran: {str(e)}")
     
     def _create_fallback_material(self, specialization: str, level: str, current_topic: str, topics: list, user_id: str) -> Dict:
-        """Create a fallback material - SAME LOGIC"""
+        """Create a fallback material when AI generation fails"""
         import uuid
         from datetime import datetime
         
@@ -560,7 +467,7 @@ class EducationAgent:
         return material
     
     def generate_adaptive_quiz(self, material: Dict) -> Dict:
-        """Generate adaptive quiz - SAME LOGIC, just replace groq call"""
+        """Generate adaptive quiz based on learning material using AI"""
         
         try:
             title = material.get('title', 'Unknown Topic')
@@ -569,10 +476,12 @@ class EducationAgent:
             specialization = material.get('specialization', 'general')
             difficulty_settings = self._get_difficulty_settings(level)
             
+            # Get content summary for context (limit to avoid token limits)
             content = json.dumps(material.get('content', {}), indent=2)[:2000]
             
             print(f"Generating quiz for: {title}, Level: {level}, Specialization: {specialization}")
             
+            # Create specialized prompt based on material structure
             prompt = f"""
             Berdasarkan materi pembelajaran "{title}" untuk level {level} dalam bidang {specialization}, buatkan quiz yang komprehensif.
             
@@ -651,63 +560,73 @@ class EducationAgent:
             print("Sending request to AI for quiz generation...")
             
             try:
-                # REPLACED: self.groq.chat.completions.create() with self.generate_text()
-                response_content = self.generate_text(prompt, max_length=4000, temperature=0.3)
+                response = self.groq.chat.completions.create(
+                    messages=[{"role": "user", "content": prompt}],
+                    model=self.model,
+                    temperature=0.3,
+                    max_tokens=4000
+                )
                 
-                if not response_content:
+                if not response or not response.choices:
+                    print("Empty response from AI")
+                    return self._create_fallback_quiz(material, level, difficulty_settings)
+                    
+                content = response.choices[0].message.content
+                
+                if not content:
                     print("Empty content from AI response")
                     return self._create_fallback_quiz(material, level, difficulty_settings)
                     
-                print(f"AI response length: {len(response_content)}")
-                print(f"AI response first 200 chars: {response_content[:200]}")
+                print(f"AI response length: {len(content)}")
+                print(f"AI response first 200 chars: {content[:200]}")
                 
             except Exception as ai_error:
                 print(f"AI generation error: {ai_error}")
                 return self._create_fallback_quiz(material, level, difficulty_settings)
             
-            # Clean up the content (similar to material generation) - SAME LOGIC
-            response_content = response_content.strip()
+            # Clean up the content (similar to material generation)
+            content = content.strip()
             
-            if response_content.startswith('```json'):
-                response_content = response_content[7:]
-                if response_content.endswith('```'):
-                    response_content = response_content[:-3]
-            elif response_content.startswith('```'):
-                response_content = response_content[3:]
-                if response_content.endswith('```'):
-                    response_content = response_content[:-3]
+            if content.startswith('```json'):
+                content = content[7:]
+                if content.endswith('```'):
+                    content = content[:-3]
+            elif content.startswith('```'):
+                content = content[3:]
+                if content.endswith('```'):
+                    content = content[:-3]
             
-            response_content = response_content.strip()
+            content = content.strip()
             
-            if not response_content:
+            if not content:
                 print("Content is empty after cleanup")
                 return self._create_fallback_quiz(material, level, difficulty_settings)
             
             print("Attempting to parse JSON...")
             
-            # Try to parse JSON - SAME LOGIC
+            # Try to parse JSON
             try:
-                quiz = json.loads(response_content)
+                quiz = json.loads(content)
                 print("JSON parsing successful")
             except json.JSONDecodeError as json_error:
                 print(f"JSON Parse Error: {json_error}")
-                print(f"Content that failed to parse: {repr(response_content[:500])}")
+                print(f"Content that failed to parse: {repr(content[:500])}")
                 
                 # Try to fix common JSON issues
-                response_content = self._fix_json_content(response_content)
+                content = self._fix_json_content(content)
                 try:
-                    quiz = json.loads(response_content)
+                    quiz = json.loads(content)
                     print("JSON parsing successful after fix")
                 except json.JSONDecodeError:
                     print("Failed to fix JSON, using fallback")
                     return self._create_fallback_quiz(material, level, difficulty_settings)
             
-            # Validate quiz structure - SAME LOGIC
+            # Validate quiz structure
             if not self._validate_quiz_structure(quiz):
                 print("Invalid quiz structure, using fallback")
                 return self._create_fallback_quiz(material, level, difficulty_settings)
             
-            # Add metadata - SAME LOGIC
+            # Add metadata (consistent with material structure)
             quiz.update({
                 "id": str(uuid.uuid4()),
                 "material_id": material["id"],
@@ -727,6 +646,7 @@ class EducationAgent:
             import traceback
             print(f"Traceback: {traceback.format_exc()}")
             
+            # Return fallback quiz instead of raising exception
             try:
                 level = material.get('level', 'pemula')
                 difficulty_settings = self._get_difficulty_settings(level)
@@ -735,7 +655,7 @@ class EducationAgent:
                 raise HTTPException(status_code=500, detail=f"Failed to generate quiz: {str(e)}")
 
     def _validate_and_normalize_level(self, level: str) -> str:
-        """Validate and normalize difficulty level - SAME LOGIC"""
+        """Validate and normalize difficulty level"""
         if not level:
             return 'pemula'
             
@@ -745,6 +665,7 @@ class EducationAgent:
         if level in valid_levels:
             return level
         
+        # Try to map common variations
         level_mapping = {
             'beginner': 'pemula',
             'basic': 'pemula',
@@ -762,10 +683,10 @@ class EducationAgent:
         return level_mapping.get(level, 'pemula')
     
     def _get_difficulty_settings(self, level: str) -> Dict:
-        """Get quiz settings based on difficulty level - SAME LOGIC"""
+        """Get quiz settings based on difficulty level"""
         settings = {
             'pemula': {
-                'mc_count': (3, 5),
+                'mc_count': (3, 5),  # min, max questions
                 'pq_count': (1, 2),
                 'mc_points': 10,
                 'pq_points': 15,
@@ -790,7 +711,7 @@ class EducationAgent:
         return settings.get(level, settings['pemula'])
     
     def _calculate_max_score(self, quiz: Dict, difficulty_settings: Dict) -> int:
-        """Calculate maximum possible score for the quiz - SAME LOGIC"""
+        """Calculate maximum possible score for the quiz"""
         mc_count = len(quiz.get("multiple_choice", []))
         pq_count = len(quiz.get("practical_questions", []))
         
@@ -799,13 +720,17 @@ class EducationAgent:
                 difficulty_settings['coding_points'])
     
     def _fix_json_content(self, content: str) -> str:
-        """Try to fix common JSON formatting issues - SAME LOGIC"""
+        """Try to fix common JSON formatting issues"""
+        # Remove any trailing commas
         content = re.sub(r',(\s*[}\]])', r'\1', content)
+        
+        # Fix unescaped quotes in strings (basic fix)
         content = content.replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t')
+        
         return content
     
     def _validate_quiz_structure(self, quiz: Dict) -> bool:
-        """Validate that quiz has required structure - SAME LOGIC"""
+        """Validate that quiz has required structure"""
         required_keys = ['multiple_choice', 'practical_questions', 'coding_challenge']
         
         for key in required_keys:
@@ -813,6 +738,7 @@ class EducationAgent:
                 print(f"Missing required key: {key}")
                 return False
         
+        # Validate multiple choice questions
         mc = quiz.get('multiple_choice', [])
         if not isinstance(mc, list) or len(mc) == 0:
             print("Invalid multiple_choice structure")
@@ -828,11 +754,13 @@ class EducationAgent:
                 print("Invalid options in multiple choice")
                 return False
         
+        # Validate practical questions
         pq = quiz.get('practical_questions', [])
         if not isinstance(pq, list) or len(pq) == 0:
             print("Invalid practical_questions structure")
             return False
         
+        # Validate coding challenge
         cc = quiz.get('coding_challenge', {})
         if not isinstance(cc, dict):
             print("Invalid coding_challenge structure")
@@ -841,11 +769,12 @@ class EducationAgent:
         return True
     
     def _create_fallback_quiz(self, material: Dict, level: str, difficulty_settings: Dict) -> Dict:
-        """Create a basic fallback quiz when AI generation fails - SAME LOGIC"""
+        """Create a basic fallback quiz when AI generation fails"""
         title = material.get('title', 'Unknown Topic')
         specialization = material.get('specialization', 'general')
         learning_objectives = material.get('learning_objectives', [])
         
+        # Create context-aware questions based on material
         spec_context = {
             'data_engineer': 'data engineering',
             'data_scientist': 'data science',
@@ -938,13 +867,13 @@ class EducationAgent:
         }
     
     def _calculate_fallback_score(self, difficulty_settings: Dict) -> int:
-        """Calculate score for fallback quiz - SAME LOGIC"""
+        """Calculate score for fallback quiz"""
         return (2 * difficulty_settings['mc_points'] + 
                 1 * difficulty_settings['pq_points'] + 
                 difficulty_settings['coding_points'])
     
     def evaluate_comprehensive_quiz(self, quiz: Dict, user_answers: List[Dict], coding_answer: str = None) -> Dict:
-        """Comprehensively evaluate quiz answers - SAME LOGIC"""
+        """Comprehensively evaluate quiz answers using AI"""
         
         try:
             mc_questions = quiz.get("multiple_choice", [])
@@ -1011,8 +940,9 @@ class EducationAgent:
             
             if coding_answer and coding_challenge:
                 coding_evaluation = self._evaluate_code_with_ai(coding_challenge, coding_answer)
+                # Fix: Access the correct key from the evaluation result
                 coding_score = coding_evaluation.get("score", 0)
-                coding_feedback = coding_evaluation
+                coding_feedback = coding_evaluation  # Use the entire evaluation as feedback
             
             # Calculate total score
             max_score = quiz.get("max_score", 100)
@@ -1061,12 +991,13 @@ class EducationAgent:
             raise HTTPException(status_code=500, detail="Failed to evaluate quiz")
     
     def _evaluate_code_with_ai(self, coding_challenge: Dict, code_answer: str) -> Dict:
-        """Enhanced coding answer evaluation - SAME LOGIC, just replace groq call"""
+        """Enhanced coding answer evaluation with comprehensive feedback and solution comparison"""
         
         print("🔍 DEBUG: Starting code evaluation...")
         print(f"🔍 DEBUG: Code answer length: {len(code_answer) if code_answer else 0}")
         
         try:
+            # First, generate the ideal solution for comparison
             ideal_solution = self._generate_ideal_solution(coding_challenge)
             print("🔍 DEBUG: Ideal solution generated")
             
@@ -1179,33 +1110,39 @@ class EducationAgent:
             }}
             """
             
-            # REPLACED: self.groq.chat.completions.create() with self.generate_text()
-            response_content = self.generate_text(prompt, max_length=6000, temperature=0.2)
+            response = self.groq.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model=self.model,
+                temperature=0.2,
+                max_tokens=6000
+            )
             
-            print(f"🔍 DEBUG: AI response received, length: {len(response_content) if response_content else 0}")
+            content = response.choices[0].message.content
+            print(f"🔍 DEBUG: AI response received, length: {len(content) if content else 0}")
             
-            if not response_content or response_content.strip() == "":
+            # Better handling of empty or None responses
+            if not content or content.strip() == "":
                 print("⚠️ WARNING: Empty response from AI, using fallback evaluation")
                 return self._create_fallback_code_evaluation(code_answer, coding_challenge)
             
-            response_content = response_content.strip()
+            content = content.strip()
             
             # Remove code block markers if present
-            if response_content.startswith('```json'):
-                response_content = response_content[7:-3].strip()
-            elif response_content.startswith('```'):
-                response_content = response_content[3:-3].strip()
+            if content.startswith('```json'):
+                content = content[7:-3].strip()
+            elif content.startswith('```'):
+                content = content[3:-3].strip()
             
-            if not response_content:
+            if not content:
                 print("⚠️ WARNING: Content empty after cleanup, using fallback evaluation")
                 return self._create_fallback_code_evaluation(code_answer, coding_challenge)
             
             try:
-                evaluation = json.loads(response_content)
+                evaluation = json.loads(content)
                 print("✅ DEBUG: JSON parsing successful")
             except json.JSONDecodeError as json_error:
                 print(f"❌ JSON parsing error: {json_error}")
-                print(f"Content that failed to parse: {response_content[:200]}...")
+                print(f"Content that failed to parse: {content[:200]}...")
                 return self._create_fallback_code_evaluation(code_answer, coding_challenge)
             
             # Add the ideal solution to the response
@@ -1214,10 +1151,12 @@ class EducationAgent:
                 "explanation": "Ini adalah salah satu solusi optimal untuk masalah ini. Bandingkan dengan kode Anda!"
             }
             
+            # CRITICAL: Ensure enhanced_feedback is always present
+            # Return the correct format that matches what the frontend expects
             result = {
                 "score": evaluation.get("score", 35),
                 "max_score": 50,
-                "enhanced_feedback": evaluation,
+                "enhanced_feedback": evaluation,  # This contains all the detailed analysis
                 "feedback": {
                     "correctness": evaluation.get("detailed_feedback", {}).get("correctness", {}).get("explanation", "Code evaluated"),
                     "code_quality": evaluation.get("personalized_feedback", "Code quality assessed"),
@@ -1229,6 +1168,9 @@ class EducationAgent:
             }
             
             print("✅ DEBUG: Enhanced feedback created successfully")
+            print(f"✅ DEBUG: Enhanced feedback keys: {list(evaluation.keys())}")
+            print(f"✅ DEBUG: Result has enhanced_feedback: {'enhanced_feedback' in result}")
+            
             return result
             
         except Exception as e:
@@ -1238,7 +1180,7 @@ class EducationAgent:
             return self._create_fallback_code_evaluation(code_answer, coding_challenge)
     
     def _create_fallback_code_evaluation(self, code_answer: str, coding_challenge: Dict) -> Dict:
-        """Create fallback evaluation when AI fails - SAME LOGIC"""
+        """Create fallback evaluation when AI fails - with enhanced feedback structure"""
         
         print("🔄 DEBUG: Using fallback evaluation")
         
@@ -1338,15 +1280,15 @@ class EducationAgent:
             ],
             "ideal_solution": {
                 "code": f"""# Ideal solution for the coding challenge
-# Problem: {coding_challenge.get('problem_description', 'Coding challenge')}
-
-def solution():
-    # Optimized approach for this problem
-    # Implementation would be generated based on the specific challenge
-    pass
-
-# Note: Detailed ideal solution sedang diproses
-# Silakan review feedback di atas untuk improvement""",
+    # Problem: {coding_challenge.get('problem_description', 'Coding challenge')}
+    
+    def solution():
+        # Optimized approach for this problem
+        # Implementation would be generated based on the specific challenge
+        pass
+    
+    # Note: Detailed ideal solution sedang diproses
+    # Silakan review feedback di atas untuk improvement""",
                 "explanation": "Solusi ideal akan menunjukkan approach yang optimal dengan balance antara readability dan efficiency"
             }
         }
@@ -1354,7 +1296,7 @@ def solution():
         return {
             "score": 35,
             "max_score": 50,
-            "enhanced_feedback": fallback_enhanced,
+            "enhanced_feedback": fallback_enhanced,  # Ensure this is always present
             "feedback": {
                 "correctness": "Kode berfungsi dengan baik untuk test cases dasar",
                 "code_quality": "Code quality baik dengan room for improvement di beberapa area",
@@ -1364,33 +1306,147 @@ def solution():
                 "suggestions": ["Practice advanced problems", "Study optimization techniques", "Learn testing strategies"]
             }
         }
-
-    def _generate_ideal_solution(self, coding_challenge: Dict) -> str:
-        """Generate ideal solution for comparison - SAME LOGIC, just replace groq call"""
-        try:
-            prompt = f"""
-            Generate an ideal Python solution for this coding challenge:
             
-            Problem: {coding_challenge.get('problem_description', '')}
-            Requirements: {coding_challenge.get('requirements', [])}
-            Input Format: {coding_challenge.get('input_format', '')}
-            Output Format: {coding_challenge.get('output_format', '')}
-            Sample Input: {coding_challenge.get('sample_input', '')}
-            Sample Output: {coding_challenge.get('sample_output', '')}
+    
+    def enhanced_coding_evaluation_display(self, coding_feedback: Dict) -> str:
+        """Enhanced display for coding evaluation results"""
+        
+        if not coding_feedback:
+            return "No coding feedback available"
+        
+        display = []
+        
+        # Overall Score
+        score = coding_feedback.get('score', 0)
+        max_score = 50
+        percentage = (score / max_score) * 100
+        
+        display.append(f"## 💻 Coding Challenge Evaluation")
+        display.append(f"**Score: {score}/{max_score} ({percentage:.1f}%)**")
+        display.append("")
+        
+        # Detailed Feedback
+        detailed = coding_feedback.get('detailed_feedback', {})
+        
+        # Correctness
+        correctness = detailed.get('correctness', {})
+        display.append(f"### ✅ Correctness ({correctness.get('score', 0)}/30)")
+        display.append(f"Status: **{correctness.get('status', 'unknown').title()}**")
+        display.append(f"{correctness.get('explanation', 'No explanation available')}")
+        
+        # Test Results
+        test_results = correctness.get('test_results', [])
+        if test_results:
+            display.append("\n**Test Cases Results:**")
+            for i, test in enumerate(test_results, 1):
+                status = "✅ PASS" if test.get('passed', False) else "❌ FAIL"
+                display.append(f"- Test {i}: {status}")
+                display.append(f"  Input: `{test.get('test_case', 'N/A')}`")
+                display.append(f"  Your Output: `{test.get('student_output', 'N/A')}`")
+                display.append(f"  Explanation: {test.get('explanation', 'N/A')}")
+        
+        # Code Quality
+        quality = detailed.get('code_quality', {})
+        display.append(f"\n### 🎨 Code Quality ({quality.get('score', 0)}/15)")
+        
+        aspects = quality.get('aspects', {})
+        for aspect_name, aspect_data in aspects.items():
+            score = aspect_data.get('score', 0)
+            feedback = aspect_data.get('feedback', 'No feedback')
+            display.append(f"- **{aspect_name.title()}** ({score}/5): {feedback}")
+        
+        # Requirements Compliance
+        requirements = detailed.get('requirements_compliance', {})
+        display.append(f"\n### 📋 Requirements ({requirements.get('score', 0)}/5)")
+        
+        req_checks = requirements.get('checked_requirements', [])
+        if req_checks:
+            for req in req_checks:
+                status = "✅" if req.get('met', False) else "❌"
+                display.append(f"- {status} {req.get('requirement', 'N/A')}: {req.get('explanation', '')}")
+        
+        # Code Comparison
+        comparison = coding_feedback.get('code_comparison', {})
+        if comparison:
+            display.append("\n### 🔍 Code Analysis")
+            display.append(f"**Approach Analysis:** {comparison.get('approach_similarity', 'N/A')}")
             
-            Provide clean, efficient Python code with comments.
-            """
+            alternatives = comparison.get('alternative_approaches', [])
+            if alternatives:
+                display.append("\n**Alternative Approaches:**")
+                for alt in alternatives:
+                    display.append(f"- {alt}")
             
-            # REPLACED: groq call with generate_text
-            solution = self.generate_text(prompt, max_length=1000, temperature=0.1)
-            return solution
+            improvements = comparison.get('improvements_needed', [])
+            if improvements:
+                display.append("\n**Suggested Improvements:**")
+                for imp in improvements:
+                    display.append(f"- {imp}")
+        
+        # Learning Insights
+        insights = coding_feedback.get('learning_insights', {})
+        if insights:
+            display.append("\n### 🧠 Learning Insights")
             
-        except Exception as e:
-            print(f"Error generating ideal solution: {e}")
-            return f"# Ideal solution for: {coding_challenge.get('problem_description', 'coding challenge')}\n# Solution implementation would be optimized for this specific problem"
-
+            understood = insights.get('concepts_understood', [])
+            if understood:
+                display.append("**Concepts You've Mastered:**")
+                for concept in understood:
+                    display.append(f"✅ {concept}")
+            
+            to_review = insights.get('concepts_to_review', [])
+            if to_review:
+                display.append("\n**Areas to Review:**")
+                for concept in to_review:
+                    display.append(f"📚 {concept}")
+            
+            suggestions = insights.get('next_practice_suggestions', [])
+            if suggestions:
+                display.append("\n**Next Practice Suggestions:**")
+                for suggestion in suggestions:
+                    display.append(f"🎯 {suggestion}")
+        
+        # Ideal Solution
+        ideal = coding_feedback.get('ideal_solution', {})
+        if ideal and ideal.get('code'):
+            display.append("\n### 💡 Ideal Solution")
+            display.append(f"{ideal.get('explanation', 'Here is an optimal solution:')}")
+            display.append("```python")
+            display.append(ideal.get('code', '# No solution available'))
+            display.append("```")
+        
+        # Ideal Solution Explanation
+        ideal_explanation = coding_feedback.get('ideal_solution_explanation', {})
+        if ideal_explanation:
+            display.append(f"\n**Why This Approach:** {ideal_explanation.get('why_this_approach', 'N/A')}")
+            
+            techniques = ideal_explanation.get('key_techniques', [])
+            if techniques:
+                display.append("\n**Key Techniques Used:**")
+                for technique in techniques:
+                    display.append(f"- {technique}")
+            
+            complexity = ideal_explanation.get('complexity_analysis', '')
+            if complexity:
+                display.append(f"\n**Complexity Analysis:** {complexity}")
+        
+        # Personalized Feedback
+        personal_feedback = coding_feedback.get('personalized_feedback', '')
+        if personal_feedback:
+            display.append(f"\n### 🎯 Personalized Feedback")
+            display.append(personal_feedback)
+        
+        # Actionable Steps
+        steps = coding_feedback.get('actionable_steps', [])
+        if steps:
+            display.append("\n### 🚀 Next Steps")
+            for i, step in enumerate(steps, 1):
+                display.append(f"{i}. {step}")
+        
+        return "\n".join(display)
+        
     def _generate_overall_feedback(self, percentage: float, performance: str) -> str:
-        """Generate overall feedback based on performance - SAME LOGIC"""
+        """Generate overall feedback based on performance"""
         
         feedback_templates = {
             "Excellent": (
@@ -1410,11 +1466,12 @@ def solution():
                 "dan berlatih lebih banyak sebelum lanjut ke topik berikutnya."
             )
         }
-
+    
         return feedback_templates.get(performance, "Terus semangat belajar!")
 
+    
     def generate_comprehensive_report(self, user: Dict, material: Dict, quiz_result: Dict) -> Dict:
-        """Generate comprehensive learning report - SAME LOGIC"""
+        """Generate comprehensive learning report using AI"""
         
         try:
             username = user.get('username', 'Learner')
@@ -1459,7 +1516,7 @@ def solution():
             raise HTTPException(status_code=500, detail="Failed to generate learning report")
     
     def _analyze_learning_progress(self, quiz_result: Dict) -> Dict:
-        """Analyze detailed learning progress - SAME LOGIC"""
+        """Analyze detailed learning progress"""
         
         breakdown = quiz_result.get('breakdown', {})
         
@@ -1482,12 +1539,13 @@ def solution():
         }
     
     def _generate_personalized_recommendations(self, specialization: str, level: str, score: float, quiz_result: Dict, material: Dict) -> Dict:
-        """Generate personalized learning recommendations - SAME LOGIC"""
+        """Generate personalized learning recommendations"""
         
         next_topics = material.get('next_topics', [])
         learning_path = material.get('learning_path', [])
         
         if score >= 80:
+            # Excellent performance - recommend advancing
             return {
                 "status": "ready_to_advance",
                 "message": "Anda siap untuk materi yang lebih advanced!",
@@ -1500,6 +1558,7 @@ def solution():
                 "estimated_timeline": "1-2 minggu untuk topik berikutnya"
             }
         elif score >= 60:
+            # Good performance - some review needed
             return {
                 "status": "review_and_advance",
                 "message": "Pemahaman baik, tapi ada area yang perlu diperkuat",
@@ -1513,6 +1572,7 @@ def solution():
                 "estimated_timeline": "2-3 minggu termasuk review"
             }
         else:
+            # Poor performance - need to repeat
             return {
                 "status": "need_review",
                 "message": "Disarankan untuk mempelajari ulang materi ini",
@@ -1531,7 +1591,7 @@ def solution():
             }
     
     def _identify_weak_areas(self, quiz_result: Dict) -> List[str]:
-        """Identify areas that need improvement - SAME LOGIC"""
+        """Identify areas that need improvement based on quiz results"""
         
         weak_areas = []
         breakdown = quiz_result.get('breakdown', {})
@@ -1554,7 +1614,7 @@ def solution():
         return weak_areas
     
     def _generate_achievements(self, score: float, performance: str, level: str) -> List[Dict]:
-        """Generate achievement badges - SAME LOGIC"""
+        """Generate achievement badges based on performance"""
         
         achievements = []
         
@@ -1583,6 +1643,7 @@ def solution():
                 "icon": "💪"
             })
         
+        # Level-based achievements
         achievements.append({
             "badge": f"{level.title()} Learner",
             "description": f"Belajar di level {level}",
@@ -1592,12 +1653,13 @@ def solution():
         return achievements
     
     def _generate_next_steps(self, specialization: str, level: str, score: float, material: Dict) -> Dict:
-        """Generate specific next steps - SAME LOGIC"""
+        """Generate specific next steps for learning"""
         
         learning_path = material.get('learning_path', [])
         current_index = material.get('current_topic_index', 0)
         
         if score >= 70:
+            # Can advance
             next_topic = learning_path[current_index + 1] if current_index + 1 < len(learning_path) else "Advanced Topics"
             return {
                 "immediate_action": f"Lanjut ke: {next_topic}",
@@ -1615,6 +1677,7 @@ def solution():
                 ]
             }
         else:
+            # Need to review
             return {
                 "immediate_action": "Review dan perkuat pemahaman dasar",
                 "short_term_goals": [
@@ -1632,10 +1695,11 @@ def solution():
             }
     
     def _generate_learning_insights(self, quiz_result: Dict) -> Dict:
-        """Generate insights about learning pattern - SAME LOGIC"""
+        """Generate insights about learning pattern"""
         
         breakdown = quiz_result.get('breakdown', {})
         
+        # Analyze learning pattern
         mc_percentage = (breakdown.get('multiple_choice', {}).get('score', 0) / 
                         max(breakdown.get('multiple_choice', {}).get('max_score', 1), 1)) * 100
         practical_percentage = (breakdown.get('practical', {}).get('score', 0) / 
@@ -1660,7 +1724,7 @@ def solution():
         }
     
     def _identify_strength_area(self, mc_pct: float, practical_pct: float, coding_pct: float) -> str:
-        """Identify the strongest area - SAME LOGIC"""
+        """Identify the strongest area"""
         max_score = max(mc_pct, practical_pct, coding_pct)
         if max_score == mc_pct:
             return "Conceptual Understanding"
@@ -1670,7 +1734,7 @@ def solution():
             return "Technical Implementation"
     
     def _identify_improvement_area(self, mc_pct: float, practical_pct: float, coding_pct: float) -> str:
-        """Identify the area needing most improvement - SAME LOGIC"""
+        """Identify the area needing most improvement"""
         min_score = min(mc_pct, practical_pct, coding_pct)
         if min_score == mc_pct:
             return "Conceptual Understanding"
@@ -1680,7 +1744,7 @@ def solution():
             return "Technical Implementation"
     
     def _get_study_recommendations(self, learning_style: str) -> List[str]:
-        """Get study recommendations based on learning style - SAME LOGIC"""
+        """Get study recommendations based on learning style"""
         recommendations = {
             "theoretical": [
                 "Fokus pada pemahaman konsep dengan diagram dan visualisasi",
@@ -1706,7 +1770,7 @@ def solution():
         return recommendations.get(learning_style, recommendations["balanced"])
     
     def chat_about_material(self, material: Dict, question: str, chat_history: List = None) -> str:
-        """Enhanced chatbot for material discussion - SAME LOGIC, just replace groq call"""
+        """Enhanced chatbot for material discussion"""
         
         try:
             title = material.get('title', 'materi pembelajaran')
@@ -1717,7 +1781,7 @@ def solution():
             # Build context from chat history
             history_context = ""
             if chat_history:
-                recent_history = chat_history[-5:]
+                recent_history = chat_history[-5:]  # Last 5 messages
                 for msg in recent_history:
                     history_context += f"Q: {msg.get('question', '')}\nA: {msg.get('answer', '')}\n"
             
@@ -1747,22 +1811,22 @@ def solution():
             Jawab dengan tone supportive dan educational:
             """
             
-            # REPLACED: self.groq.chat.completions.create() with self.generate_text()
-            response = self.generate_text(prompt, max_length=1000, temperature=0.6)
+            response = self.groq.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model=self.model,
+                temperature=0.6
+            )
             
-            return response
+            return response.choices[0].message.content
             
         except Exception as e:
             print(f"Error in chat: {e}")
             return f"Maaf, saya mengalami kesulitan menjawab pertanyaan tentang {material.get('title', 'materi ini')}. Bisa coba tanya dengan cara yang berbeda atau lebih spesifik?"
 
-# Initialize the model when the module loads
-model_initialized = initialize_model()
-
 # Initialize agent
-agent = EducationAgent(tavily_client)
+agent = EducationAgent(groq_client, tavily_client)
 
-# API Endpoints - ALL SAME AS ORIGINAL
+# API Endpoints
 @app.post("/api/user/login")
 async def login_user(user: User):
     """User login and registration"""
@@ -1788,6 +1852,7 @@ async def get_assessment(user_id: str):
     user = users_db[user_id]
     specialization = user['specialization']
     
+    # Generate assessment questions using AI
     questions_data = agent.generate_assessment_questions(specialization)
     
     assessment_id = str(uuid.uuid4())
@@ -1813,6 +1878,7 @@ async def submit_assessment(submission: AssessmentSubmission):
     if submission.user_id not in users_db:
         raise HTTPException(status_code=404, detail="User not found")
     
+    # Find the assessment
     user_assessment = None
     for assessment in assessments_db.values():
         if assessment['user_id'] == submission.user_id:
@@ -1822,8 +1888,10 @@ async def submit_assessment(submission: AssessmentSubmission):
     if not user_assessment:
         raise HTTPException(status_code=404, detail="Assessment not found")
     
+    # Evaluate assessment using AI
     evaluation = agent.evaluate_assessment(submission.answers, user_assessment['questions'])
     
+    # Update user with determined level
     users_db[submission.user_id]['level'] = evaluation['level']
     users_db[submission.user_id]['assessment_result'] = evaluation
     
@@ -1850,6 +1918,7 @@ async def start_personalized_learning(user_id: str):
     specialization = user['specialization']
     level = user['level']
     
+    # Generate personalized material using AI
     material = agent.search_and_create_personalized_material(specialization, level, user_id)
     
     material_id = material['id']
@@ -1879,6 +1948,7 @@ async def generate_quiz_for_material(material_id: str):
     
     material = materials_db[material_id]
     
+    # Generate comprehensive quiz using AI
     quiz = agent.generate_adaptive_quiz(material)
     
     return {
@@ -1900,10 +1970,13 @@ async def submit_quiz_answers(submission: QuizSubmission):
     material = materials_db[submission.material_id]
     user = users_db[submission.user_id]
     
+    # Generate quiz to get correct answers
     quiz = agent.generate_adaptive_quiz(material)
     
+    # Enhanced comprehensive evaluation with improved coding assessment
     result = agent.evaluate_comprehensive_quiz(quiz, submission.answers, submission.coding_answer)
     
+    # Store result with additional metadata
     result_id = str(uuid.uuid4())
     quiz_results_db[result_id] = {
         "id": result_id,
@@ -1942,6 +2015,7 @@ async def get_comprehensive_learning_report(result_id: str):
     material = materials_db[quiz_result_data["material_id"]]
     quiz_result = quiz_result_data["result"]
     
+    # Generate comprehensive report using AI
     report = agent.generate_comprehensive_report(user, material, quiz_result)
     
     return {
@@ -1965,8 +2039,10 @@ async def chat_with_ai_tutor(message: ChatMessage):
     
     material = materials_db[message.material_id]
     
-    chat_history = []
+    # Get chat history for context (implement if needed)
+    chat_history = []  # Could be stored and retrieved from database
     
+    # Get AI tutor response
     response = agent.chat_about_material(material, message.message, chat_history)
     
     return {
@@ -1983,6 +2059,7 @@ async def get_user_progress(user_id: str):
     
     user = users_db[user_id]
     
+    # Find user's completed materials and quiz results
     completed_materials = []
     quiz_results = []
     
@@ -2019,7 +2096,7 @@ async def get_user_progress(user_id: str):
             "success_rate": sum(1 for r in quiz_results if r['passed']) / max(len(quiz_results), 1) * 100
         },
         "completed_materials": completed_materials,
-        "quiz_history": quiz_results[-5:]
+        "quiz_history": quiz_results[-5:]  # Last 5 quiz results
     }
 
 # Health check endpoint
@@ -2028,8 +2105,6 @@ async def root():
     return {
         "message": "AI Education System API is running",
         "version": "1.0.0",
-        "model": MODEL_NAME,
-        "model_loaded": model is not None,
         "features": [
             "Personalized Assessment",
             "AI-Generated Learning Materials", 
@@ -2045,16 +2120,11 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
-        "model": MODEL_NAME,
-        "model_status": "loaded" if model is not None else "api_fallback",
-        "device": str(device) if device else "unknown",
         "services": {
-            "huggingface_model": "loaded" if model is not None else "api_fallback",
-            "tavily_api": "connected" if tavily_client else "disabled"
+            "groq_api": "connected",
+            "tavily_api": "connected"
         }
     }
 
 if __name__ == "__main__":
-    print(f"Starting server with model: {MODEL_NAME}")
-    print(f"Model loaded locally: {model is not None}")
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -1,7 +1,7 @@
 # AI-Powered Learning Platform
 ## Platform Pembelajaran Data Engineer, Data Analyst & Data Scientist dengan AI
 
-Platform pembelajaran interaktif yang menggunakan kecerdasan buatan untuk memberikan pengalaman belajar yang dipersonalisasi dalam bidang Data Engineering, Data Analyst dan Data Science. Sistem ini menggunakan **Sahabat-AI/Llama-Sahabat-AI-v2-70B-IT** (model Bahasa Indonesia) untuk menghasilkan konten pembelajaran yang berkualitas tinggi.
+Platform pembelajaran interaktif yang menggunakan kecerdasan buatan untuk memberikan pengalaman belajar yang dipersonalisasi dalam bidang Data Engineering, Data Analyst dan Data Science. Sistem ini menggunakan **llama-3.3-70b-versatile** (model berkualitas tinggi melalui Groq API) untuk menghasilkan konten pembelajaran yang berkualitas tinggi.
 
 ## 🎯 Fitur Utama
 
@@ -61,10 +61,9 @@ graph TD
 
 ### **Backend Technology Stack**
 - **FastAPI** - Modern Python web framework untuk API
-- **Hugging Face Transformers** - Local model inference
-- **Sahabat-AI/Llama-Sahabat-AI-v2-70B-IT** - Indonesian language model
+- **Groq API** - High-speed LLM inference untuk model deployment
+- **llama-3.3-70b-versatile** - Advanced language model via Groq
 - **Tavily API** - Web search untuk content enrichment
-- **PyTorch** - Deep learning framework untuk model inference
 - **Pydantic** - Data validation dan serialization
 
 ### **Frontend Technology Stack**
@@ -75,31 +74,31 @@ graph TD
 
 ### **AI Model Architecture**
 
-#### **Sahabat-AI Integration**
+#### **Llama-3.3-70B-Versatile Integration**
 ```python
-# Smart Loading Strategy
+# Smart API Integration Strategy
 def initialize_model():
-    # Try local model loading (GPU/CPU)
-    # Fallback to Hugging Face Inference API
+    # Primary: Groq API for high-speed inference
+    # Fallback: Alternative API endpoints
     # Ensures 99.9% availability
 ```
 
 **Model Specifications:**
 - **Size**: 70 billion parameters
-- **Language**: Indonesian (Bahasa Indonesia)
-- **Type**: Instruction-tuned (IT) for educational tasks
-- **Base**: Llama architecture with Indonesian fine-tuning
+- **Type**: Versatile instruction-tuned model
+- **Provider**: Groq API for optimized inference
+- **Language Support**: Multilingual including Indonesian
 
-#### **Dual Inference Strategy**
-1. **Local Inference** (Primary)
-   - GPU acceleration with CUDA support
-   - CPU fallback for compatibility
-   - Optimized memory management
+#### **API Inference Strategy**
+1. **Groq API** (Primary)
+   - High-speed inference with optimized hardware
+   - Low latency for real-time interactions
+   - Reliable uptime and performance
    
-2. **API Inference** (Fallback)
-   - Hugging Face Inference API
-   - Zero local resource requirements
-   - Automatic failover mechanism
+2. **Fallback Mechanisms**
+   - Template-based content generation
+   - Cached responses for common queries
+   - Graceful degradation strategies
 
 ### **Content Generation Pipeline**
 
@@ -134,10 +133,10 @@ def generate_adaptive_quiz(self, material: Dict):
 
 ### **System Requirements**
 - **Python**: 3.8+ (recommended 3.10+)
-- **RAM**: Minimum 8GB (32GB+ for local model)
-- **GPU**: CUDA-compatible (optional, for local inference)
-- **Storage**: 200GB+ free space (for local model)
-- **Network**: Stable internet for API fallback
+- **RAM**: Minimum 4GB (8GB+ recommended)
+- **Network**: Stable internet for API access
+- **Storage**: 1GB+ free space for application
+- **API Access**: Groq API key for model access
 
 ### **1. Environment Setup**
 ```bash
@@ -159,31 +158,28 @@ source venv/bin/activate
 ```bash
 # Install all dependencies
 pip install -r requirements.txt
-
-# For GPU support (optional)
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
 ### **3. Environment Configuration**
 Create `.env` file in root directory:
 ```env
-# Hugging Face Configuration
-HUGGINGFACE_API_KEY=your_huggingface_token_here
+# Groq API Configuration
+GROQ_API_KEY=your_groq_api_key_here
 
 # Search API Configuration  
 TAVILY_API_KEY=your_tavily_api_key_here
 
-# Optional: Model Configuration
-MODEL_CACHE_DIR=./models
-DEVICE=auto  # auto, cuda, cpu
+# Optional: Application Configuration
+MODEL_NAME=llama-3.3-70b-versatile
+API_TIMEOUT=30
 ```
 
 ### **4. API Keys Setup**
 
-#### **Hugging Face Token**
-1. Visit [Hugging Face](https://huggingface.co/settings/tokens)
-2. Create new token with "Read" permissions
-3. For private models, ensure access permissions
+#### **Groq API Key**
+1. Visit [Groq Console](https://console.groq.com)
+2. Create account and generate API key
+3. Copy the API key to your `.env` file
 
 #### **Tavily API Key**
 1. Register at [Tavily](https://tavily.com)
@@ -237,12 +233,13 @@ ai-learning-platform/
 #### **EducationAgent Class**
 ```python
 class EducationAgent:
-    def __init__(self, tavily_client):
+    def __init__(self, groq_client, tavily_client):
+        self.groq = groq_client
         self.tavily = tavily_client
-        self.model_name = MODEL_NAME
+        self.model = "llama-3.3-70b-versatile"
     
     # Core AI Methods
-    def generate_text()                    # HF model inference
+    def generate_text()                    # Groq API inference
     def generate_assessment_questions()    # Create assessments
     def evaluate_assessment()             # Score assessments
     def search_and_create_personalized_material()  # Generate learning content
@@ -284,12 +281,12 @@ GET  /api/health                 # Detailed system health
 ### **Model Configuration Options**
 ```python
 # In api_main.py, you can adjust:
-MODEL_NAME = "Sahabat-AI/Llama-Sahabat-AI-v2-70B-IT"  # Change model
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # Device selection
+MODEL_NAME = "llama-3.3-70b-versatile"  # Groq model selection
+groq_client = Groq(api_key=GROQ_API_KEY)  # API client initialization
 
 # Generation parameters
 temperature=0.1      # Lower = more focused, Higher = more creative
-max_length=2048     # Maximum response length
+max_tokens=2048     # Maximum response length
 top_p=0.9          # Nucleus sampling parameter
 ```
 
@@ -409,10 +406,8 @@ print(chat_response.json()["response"])
 # Health check endpoint provides:
 {
     "status": "healthy",
-    "model_status": "loaded",  # or "api_fallback"
-    "device": "cuda:0",
     "services": {
-        "huggingface_model": "loaded",
+        "groq_api": "connected",
         "tavily_api": "connected"
     }
 }
@@ -428,38 +423,29 @@ print(chat_response.json()["response"])
 
 ### **Error Handling Strategy**
 - **Graceful Degradation** - Fallback content when AI fails
-- **Multiple Fallbacks** - Local model → API → Template content
+- **API Fallbacks** - Multiple strategies for service continuity
 - **User-Friendly Messages** - Clear error communication
 - **Automatic Recovery** - Self-healing mechanisms
 
 ### **Performance Optimization**
-- **Model Caching** - Efficient memory usage
+- **API Caching** - Efficient response management
 - **Response Streaming** - Progressive content loading
-- **Resource Management** - GPU memory optimization
-- **API Rate Limiting** - Prevents service overload
+- **Rate Limiting** - Prevents service overload
+- **Resource Management** - Optimized API usage
 
 ## 🐛 Troubleshooting Guide
 
 ### **Common Issues dan Solutions**
 
-#### **Model Loading Issues**
-```bash
-# Problem: CUDA out of memory
-# Solution: Force CPU inference
-export CUDA_VISIBLE_DEVICES=""
-python api_main.py
-
-# Problem: Model download fails
-# Solution: Set cache directory
-export TRANSFORMERS_CACHE=./models
-```
-
 #### **API Connection Issues**
 ```bash
-# Problem: Hugging Face API quota exceeded
-# Solution: Check API usage or use local model
-curl -H "Authorization: Bearer YOUR_TOKEN" \
-     https://api-inference.huggingface.co/models/Sahabat-AI/Llama-Sahabat-AI-v2-70B-IT
+# Problem: Groq API key invalid
+# Solution: Check API key in .env file
+curl -H "Authorization: Bearer YOUR_GROQ_KEY" \
+     https://api.groq.com/openai/v1/models
+
+# Problem: API quota exceeded
+# Solution: Check usage limits in Groq Console
 
 # Problem: Tavily API not responding
 # Solution: API is optional, system continues without it
@@ -482,9 +468,9 @@ Enable detailed logging:
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Check model status
-print(f"Model loaded: {model is not None}")
-print(f"Device: {device}")
+# Check API status
+print(f"Groq client initialized: {groq_client is not None}")
+print(f"Model: {MODEL_NAME}")
 ```
 
 ## 🤝 Contributing Guidelines
@@ -521,8 +507,8 @@ npm test  # If using Node.js testing
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ### **Acknowledgments**
-- **Sahabat-AI Team** - Indonesian language model development
-- **Hugging Face** - Transformers library and model hosting
+- **Groq Team** - High-performance LLM inference platform
+- **Meta AI** - Llama model development
 - **Tavily** - Search API services
 - **FastAPI Team** - Modern Python web framework
 
@@ -548,7 +534,7 @@ python -m venv venv && venv\Scripts\activate
 
 # 2. Install and configure
 pip install -r requirements.txt
-echo "HUGGINGFACE_API_KEY=your_key" > .env
+echo "GROQ_API_KEY=your_key" > .env
 
 # 3. Run the platform
 python api_main.py  # Backend (port 8000)
