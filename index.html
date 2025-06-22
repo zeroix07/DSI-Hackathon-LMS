@@ -269,7 +269,7 @@
     </div>
     <nav>
       <a href="#">Home</a>
-      <a href="course.html">Course</a>
+      <a href="templates/course.html">Course</a>
       <a href="#">About Us</a>
       <a href="#">Contact</a>
     </nav>
@@ -278,7 +278,7 @@
   <section class="section">
     <div class="section-text">
       <h1>Learn Smarter <br> Not Harder</h1>
-      <p>Say goodbye to one-size-fits-all education. Our AI-driven platform tailors lessons, quizzes, and study plans just for you—based on your goals, learning style, and pace.</p>
+      <p>Ucapkan selamat tinggal pada pendidikan yang seragam. Platform berbasis AI kami menyesuaikan pelajaran, kuis, dan rencana belajar hanya untuk Anda—berdasarkan tujuan, gaya belajar, dan kecepatan Anda.</p>
     </div>
     <div class="section-graphic">
       <img src="image/data visualization.svg" alt="Learning illustration">
@@ -288,7 +288,7 @@
   <section class="paths-section">
     <div class="paths-text">
       <h2>Jalur Belajar</h2>
-      <p>Kami tidak percaya pada satu ukuran yang cocok untuk semua. Platform kami membangun perjalanan belajar Anda secara dinamis berdasarkan keterampilan dan minat Anda saat ini.</p>
+      <p>Kami tidak percaya pada pendidikan yang seragam. Platform kami membangun perjalanan belajar Anda secara dinamis berdasarkan keterampilan dan minat Anda saat ini.</p>
     </div>
     <div class="path-content">
       <div class="path-box">
@@ -547,7 +547,7 @@
             email: email,
             returning_user: 'true'
           });
-          window.location.href = `course.html?${userParams.toString()}`;
+          window.location.href = `templates/course.html?${userParams.toString()}`;
         }, 1500);
       }, 1000);
     }
@@ -591,7 +591,7 @@
               specialization: path,
               new_user: 'true'
             });
-            window.location.href = `course.html?${userParams.toString()}`;
+            window.location.href = `templates/course.html?${userParams.toString()}`;
           }, 1500);
         }
       } catch (error) {
@@ -608,7 +608,7 @@
         showStatus('✅ Demo ready!', 'success');
         setTimeout(() => {
           closeModal();
-          window.location.href = `course.html?demo=true&path=${path}`;
+          window.location.href = `templates/course.html?demo=true&path=${path}`;
         }, 1000);
       }, 1000);
     }
